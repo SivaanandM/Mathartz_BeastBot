@@ -1,9 +1,5 @@
 package com.beastbot.list;
 
-import java.util.List;
-
-import javax.swing.table.AbstractTableModel;
-
 public class Scriptsdetail 
 {
 	String secid;  

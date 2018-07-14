@@ -27,6 +27,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 import com.beastbot.presto.*;
+import com.beastbot.common.DbFuncs;
 import com.beastbot.list.*;
 
 import javax.swing.JPanel;
@@ -39,6 +40,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.JSeparator;
 
+import org.h2.jdbcx.JdbcDataSource;
+
 public class ScriptSearch {
 
 	private JFrame frmScriptSearch;
@@ -49,6 +52,7 @@ public class ScriptSearch {
 	private List<Scriptsdetail> records=null;
 	presto_commons objpresto;
 	TableModel model;
+	DbFuncs objdb;
 	String col[]= {"SEC-ID","SYMBOL","EXCHANGE","INSTRUMENTS","LOT-SIZE","TICK-SIZE","EXPIRY-DD","EXPIRY-MMMYY","OPT-TYPE","STRIKE"};
 
 	/**
@@ -71,6 +75,7 @@ public class ScriptSearch {
 	 * Create the application.
 	 */
 	public ScriptSearch() {
+		objdb = new DbFuncs();
 		initialize();
 	}
 
@@ -211,8 +216,12 @@ public class ScriptSearch {
 				public void actionPerformed(ActionEvent arg0) {
 					
 					records = objpresto.getMatchedScripts(textSymbol.getText(), txtExpmm.getText()+txtExpyyyy.getText());
+					String [] batchstmt = new String[records.size()];
 					if ((records != null) && (records.size() > 0))
 					{
+						objdb.executeNonQuery(null, "DELETE FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+textSymbol.getText()+"' and INSTRUMENT='FUTIDX';");
+						objdb.executeNonQuery(null, "DELETE FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+textSymbol.getText()+"' and EXPMMMYY='"+txtExpmm.getText()+txtExpyyyy.getText()+"';");
+						
 						String [][] values = new String[records.size()][10];
 						for(int i=0; i < records.size(); i++)
 						{
@@ -227,12 +236,17 @@ public class ScriptSearch {
 							values[i][7] = records.get(i).getExpmmmdd();
 							values[i][8] = records.get(i).getOpttype();
 							values[i][9] = records.get(i).getStrike();
+							
+							batchstmt[i] = "INSERT INTO TBL_MASTER_CONTRACTS (SECID, SYMBOL, EXCHANGE, INSTRUMENT, LOTSIZE, TICKSIZE, EXPDD, EXPMMMYY, OPTTYPE, STRIKE) "
+									+ "VALUES ('"+values[i][0]+"','"+values[i][1]+"','"+values[i][2]+"','"+values[i][3]+"','"+values[i][4]+"'"
+											+ ",'"+values[i][5]+"','"+values[i][6]+"','"+values[i][7]+"','"+values[i][8]+"','"+values[i][9]+"');";
+							
 						}
-						
+						int insertcount = objdb.executeBatchStatement(null, batchstmt);
 						model = new DefaultTableModel(values, col);
 						table.setModel(model);	
-						JOptionPane.showMessageDialog(frmScriptSearch, 
-								(values.length+1)+"Sec Id found for "+ textSymbol.getText() + " In Contract Month "+txtExpmm.getText()+txtExpyyyy.getText()+
+						JOptionPane.showMessageDialog(frmScriptSearch,
+								(values.length)+"Sec Id found & inserted for "+ textSymbol.getText() + " In Contract Month "+txtExpmm.getText()+txtExpyyyy.getText()+
 								" \n CSV genrated in Destop as "+textSymbol.getText()+".csv", "INFO",JOptionPane.INFORMATION_MESSAGE);
 						if (values.length > 0)
 						{
