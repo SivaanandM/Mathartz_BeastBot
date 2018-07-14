@@ -17,8 +17,8 @@ EXPDD varchar(50) , EXPMMMYY varchar(50) , OPTTYPE varchar(50) , STRIKE varchar(
 
 'BEAST VIEW'
 Create table TBL_BEAST_VIEW  (id bigint,  HEADDISPLAY varchar(50) not null, 
-PLAYERDISPLAY varchar(50) not null, F1POINT varchar(50) not null,  F2POINT varchar(50) not null,  F3POINT varchar(50) not null,  
-F4POINT varchar(50) not null,  F5POINT varchar(50) not null,);
+PLAYERDISPLAY varchar(50) , F1POINT varchar(50),  F2POINT varchar(50),  F3POINT varchar(50),  
+F4POINT varchar(50) ,  F5POINT varchar(50) );
 
 'FORMULA DATA'
 

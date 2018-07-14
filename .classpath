@@ -18,5 +18,6 @@
 	<classpathentry kind="lib" path="C:/Users/findc06/git/TradeBot/TradeBot/ExLibrary/spring-expression-3.0.3.RELEASE.jar"/>
 	<classpathentry kind="lib" path="C:/Users/findc06/git/TradeBot/TradeBot/ExLibrary/spring-jms-3.0.3.RELEASE.jar"/>
 	<classpathentry kind="lib" path="C:/Users/findc06/git/TradeBot/TradeBot/ExLibrary/spring-tx-3.0.3.RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/Users/findc06/git/TradeBot/TradeBot/ExLibrary/tinylog-1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

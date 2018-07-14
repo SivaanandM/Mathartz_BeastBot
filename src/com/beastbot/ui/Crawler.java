@@ -11,6 +11,8 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,15 +33,17 @@ public class Crawler {
 	private JTextField txtsymbol;
 	private JTextField txtfutmmm;
 	private JTextField txtstrike;
-	private JTextField txtxdd;
-	private JTextField txtmm;
-	private JTextField txtyy;
+	private JTextField txtoptdd;
+	private JTextField txtoptmm;
+	private JTextField txtoptyy;
 	JPanel pnlopt, pnlfut;
 	private String operation, side;
+	private int seedid;
 	JComboBox<String> cmbinstrument;
 	JComboBox<String> cmbright;
 	DbFuncs dbobj;
 	private JTextField txtfutyy;
+	String [] centraldate ;
 
 	/**
 	 * Launch the application.
@@ -48,7 +52,7 @@ public class Crawler {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Crawler window = new Crawler("add","head",0);
+					Crawler window = new Crawler("add","player",16);
 					window.frmcrawler.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -64,7 +68,9 @@ public class Crawler {
 	{
 		operation = opera;
 		side = forside;
+		seedid = identity;
 		dbobj = new DbFuncs();
+		centraldate = dbobj.loadCentralizedDate();
 		initialize();
 	}
 
@@ -122,6 +128,7 @@ public class Crawler {
 		innerpanel.add(lblSymbol);
 		
 		txtsymbol = new JTextField();
+		txtsymbol.setText("NIFTY");
 		txtsymbol.setHorizontalAlignment(SwingConstants.CENTER);
 		txtsymbol.setForeground(new Color(255, 220, 135));
 		txtsymbol.setFont(new Font("Verdana", Font.PLAIN, 20));
@@ -129,6 +136,16 @@ public class Crawler {
 		txtsymbol.setCaretColor(Color.WHITE);
 		txtsymbol.setBackground(new Color(36, 34, 29));
 		txtsymbol.setBounds(149, 61, 156, 42);
+		txtsymbol.addKeyListener(new KeyAdapter() {
+
+			  public void keyTyped(KeyEvent e) {
+			    char keyChar = e.getKeyChar();
+			    if (Character.isLowerCase(keyChar)) {
+			      e.setKeyChar(Character.toUpperCase(keyChar));
+			    }
+			  }
+
+			});
 		innerpanel.add(txtsymbol);
 		
 		pnlfut = new JPanel();
@@ -147,7 +164,9 @@ public class Crawler {
 		lblMonth.setFont(new Font("Verdana", Font.PLAIN, 16));
 		pnlfut.add(lblMonth);
 		
-		txtfutmmm = new JTextField();
+		
+		
+		txtfutmmm = new JTextField(centraldate[1]);
 		txtfutmmm.setBounds(129, 6, 105, 43);
 		txtfutmmm.setHorizontalAlignment(SwingConstants.CENTER);
 		txtfutmmm.setForeground(new Color(255, 220, 135));
@@ -155,10 +174,19 @@ public class Crawler {
 		txtfutmmm.setColumns(10);
 		txtfutmmm.setCaretColor(Color.WHITE);
 		txtfutmmm.setBackground(new Color(36, 34, 29));
+		txtfutmmm.addKeyListener(new KeyAdapter() {
+
+			  public void keyTyped(KeyEvent e) {
+			    char keyChar = e.getKeyChar();
+			    if (Character.isLowerCase(keyChar)) {
+			      e.setKeyChar(Character.toUpperCase(keyChar));
+			    }
+			  }
+
+			});
 		pnlfut.add(txtfutmmm);
 		
-		txtfutyy = new JTextField();
-		txtfutyy.setText("18");
+		txtfutyy = new JTextField(centraldate[2]);
 		txtfutyy.setHorizontalAlignment(SwingConstants.CENTER);
 		txtfutyy.setForeground(new Color(255, 220, 135));
 		txtfutyy.setFont(new Font("Verdana", Font.PLAIN, 20));
@@ -213,35 +241,40 @@ public class Crawler {
 		lblDate.setBounds(10, 114, 108, 21);
 		pnlopt.add(lblDate);
 		
-		txtxdd = new JTextField();
-		txtxdd.setHorizontalAlignment(SwingConstants.CENTER);
-		txtxdd.setForeground(new Color(255, 220, 135));
-		txtxdd.setFont(new Font("Verdana", Font.PLAIN, 20));
-		txtxdd.setColumns(10);
-		txtxdd.setCaretColor(Color.WHITE);
-		txtxdd.setBackground(new Color(36, 34, 29));
-		txtxdd.setBounds(128, 101, 50, 44);
-		pnlopt.add(txtxdd);
 		
-		txtmm = new JTextField();
-		txtmm.setHorizontalAlignment(SwingConstants.CENTER);
-		txtmm.setForeground(new Color(255, 220, 135));
-		txtmm.setFont(new Font("Verdana", Font.PLAIN, 20));
-		txtmm.setColumns(10);
-		txtmm.setCaretColor(Color.WHITE);
-		txtmm.setBackground(new Color(36, 34, 29));
-		txtmm.setBounds(180, 101, 50, 44);
-		pnlopt.add(txtmm);
 		
-		txtyy = new JTextField();
-		txtyy.setHorizontalAlignment(SwingConstants.CENTER);
-		txtyy.setForeground(new Color(255, 220, 135));
-		txtyy.setFont(new Font("Verdana", Font.PLAIN, 20));
-		txtyy.setColumns(10);
-		txtyy.setCaretColor(Color.WHITE);
-		txtyy.setBackground(new Color(36, 34, 29));
-		txtyy.setBounds(233, 101, 50, 44);
-		pnlopt.add(txtyy);
+		txtoptdd = new JTextField(centraldate[0]);
+		txtoptdd.setEnabled(false);
+		txtoptdd.setHorizontalAlignment(SwingConstants.CENTER);
+		txtoptdd.setForeground(new Color(255, 220, 135));
+		txtoptdd.setFont(new Font("Verdana", Font.PLAIN, 20));
+		txtoptdd.setColumns(10);
+		txtoptdd.setCaretColor(Color.WHITE);
+		txtoptdd.setBackground(new Color(36, 34, 29));
+		txtoptdd.setBounds(128, 101, 50, 44);
+		pnlopt.add(txtoptdd);
+		
+		txtoptmm = new JTextField(centraldate[1]);
+		txtoptmm.setEnabled(false);
+		txtoptmm.setHorizontalAlignment(SwingConstants.CENTER);
+		txtoptmm.setForeground(new Color(255, 220, 135));
+		txtoptmm.setFont(new Font("Verdana", Font.PLAIN, 20));
+		txtoptmm.setColumns(10);
+		txtoptmm.setCaretColor(Color.WHITE);
+		txtoptmm.setBackground(new Color(36, 34, 29));
+		txtoptmm.setBounds(180, 101, 50, 44);
+		pnlopt.add(txtoptmm);
+		
+		txtoptyy = new JTextField(centraldate[2]);
+		txtoptyy.setEnabled(false);
+		txtoptyy.setHorizontalAlignment(SwingConstants.CENTER);
+		txtoptyy.setForeground(new Color(255, 220, 135));
+		txtoptyy.setFont(new Font("Verdana", Font.PLAIN, 20));
+		txtoptyy.setColumns(10);
+		txtoptyy.setCaretColor(Color.WHITE);
+		txtoptyy.setBackground(new Color(36, 34, 29));
+		txtoptyy.setBounds(233, 101, 50, 44);
+		pnlopt.add(txtoptyy);
 		
 		JButton btnSave = new JButton("SAVE");
 		btnSave.addActionListener(new ActionListener() {
@@ -256,18 +289,18 @@ public class Crawler {
 					}
 					else if (operation.toUpperCase().equals("EDIT"))
 					{
-						HeadEdit();
+						HeadEdit(seedid);
 					}
 				}
 				else if (side.toUpperCase().equals("PLAYER"))
 				{
 					if (operation.toUpperCase().equals("ADD"))
 					{
-						PlayerAdd();
+						PlayerAdd(seedid);
 					}
 					else if (operation.toUpperCase().equals("EDIT"))
 					{
-						PlayerEdit();
+						PlayerEdit(seedid);
 					}
 				}
 			}
@@ -288,26 +321,34 @@ public class Crawler {
 	{
 		try
 		{
+			int identity;
+			String strheaddisplay="";
+			List<Scriptsdetail> headdata = null;
 			if (cmbinstrument.getSelectedItem()=="FUT")
 			{
-				// Getting Contract Detail for Head
-				List<Scriptsdetail> headdata = dbobj.getContractdata(null, "SELECT * FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+ txtsymbol.getText()+"'"
+				// Getting Contract Detail for Head FUT
+				headdata = dbobj.getContractdata(null, "SELECT * FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+ txtsymbol.getText()+"'"
 						+ " and INSTRUMENT='FUTIDX' and EXPMMMYY='"+txtfutmmm.getText()+txtfutyy.getText()+"';");
-				if ((headdata != null) && (headdata.size() > 0))
-				{
-					Boolean done = dbobj.executeNonQuery(null, "INSERT INTO TBL_TRADE_LINE (HEADID, HEADDISPLAY, HEADSYMBOL) VALUES "
-							+ "('"+headdata.get(0).getSecid()+"','"+ headdata.get(0).getSymbol() +" "+ headdata.get(0).getInstrument()+" "+headdata.get(0).getExpmmmdd()+"','"+headdata.get(0).getSymbol()+"' )");
-					JOptionPane.showMessageDialog(frmcrawler,"Head Added to Trade Line : '"+done.toString()+"'", "INFO",JOptionPane.INFORMATION_MESSAGE);
-				}
-				else
-				{
-					//give warning message box
-					JOptionPane.showMessageDialog(frmcrawler,"No Record Found for given search from Crawler DB, \n Kindly Refresh from Presto Contracts Crawler !! ", "ERROR",JOptionPane.ERROR_MESSAGE);
-				}
+				strheaddisplay = headdata.get(0).getSymbol() +"-"+headdata.get(0).getExpmmmdd();
 			}
 			else if (cmbinstrument.getSelectedItem()=="OPT")
 			{
-				
+				// Getting Contract Detail for Head OPT
+				headdata = dbobj.getContractdata(null, "SELECT * FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+ txtsymbol.getText()+"'"
+						+ " and INSTRUMENT='OPTIDX' and STRIKE ='"+txtstrike.getText()+"' and OPTTYPE='"+cmbright.getSelectedItem()+"' and EXPDD='"+txtoptdd.getText()+"' and EXPMMMYY='"+txtoptmm.getText()+txtoptyy.getText()+"';");
+				strheaddisplay =  headdata.get(0).getSymbol() +"-"+headdata.get(0).getOpttype()+"-"+ headdata.get(0).getStrike()+"-"+headdata.get(0).getExpdd()+headdata.get(0).getExpmmmdd();
+			}
+			if ((headdata != null) && (headdata.size() > 0))
+			{
+				 identity = dbobj.getIdentityforInsert(null, "INSERT INTO TBL_TRADE_LINE (HEADID, HEADDISPLAY, HEADSYMBOL) VALUES "
+						+ "('"+headdata.get(0).getSecid()+"','"+strheaddisplay+"','"+headdata.get(0).getSymbol()+"' );");
+				 dbobj.executeNonQuery(null, "INSERT INTO TBL_BEAST_VIEW (ID,HEADDISPLAY) VALUES ("+identity+",'"+strheaddisplay+"');");
+				JOptionPane.showMessageDialog(frmcrawler,"Head Added to Trade Line Identity : "+String.valueOf(identity), "INFO",JOptionPane.INFORMATION_MESSAGE);
+			}
+			else
+			{
+				//give warning message box
+				JOptionPane.showMessageDialog(frmcrawler,"No Record Found for given search from Crawler DB, \n Kindly Refresh from Presto Contracts Crawler !! ", "ERROR",JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		catch(Exception ex)
@@ -315,7 +356,7 @@ public class Crawler {
 			System.out.println(ex.toString());
 		}
 	}
-	public void HeadEdit()
+	public void HeadEdit(int id)
 	{
 		try
 		{
@@ -326,18 +367,46 @@ public class Crawler {
 			System.out.println(ex.toString());
 		}
 	}
-	public void PlayerAdd()
+	public void PlayerAdd(int id)
 	{
 		try
 		{
 			
+			String strplayerdisplay="";
+			List<Scriptsdetail> playerdata = null;
+			if (cmbinstrument.getSelectedItem()=="FUT")
+			{
+				// Getting Contract Detail for PLAYER FUT
+				playerdata = dbobj.getContractdata(null, "SELECT * FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+ txtsymbol.getText()+"'"
+						+ " and INSTRUMENT='FUTIDX' and EXPMMMYY='"+txtfutmmm.getText()+txtfutyy.getText()+"';");
+				strplayerdisplay = playerdata.get(0).getSymbol() +"-"+playerdata.get(0).getExpmmmdd();
+			}
+			else if (cmbinstrument.getSelectedItem()=="OPT")
+			{
+				// Getting Contract Detail for Player OPT
+				playerdata = dbobj.getContractdata(null, "SELECT * FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+ txtsymbol.getText()+"'"
+						+ " and INSTRUMENT='OPTIDX' and STRIKE ='"+txtstrike.getText()+"' and OPTTYPE='"+cmbright.getSelectedItem()+"' and EXPDD='"+txtoptdd.getText()+"' and EXPMMMYY='"+txtoptmm.getText()+txtoptyy.getText()+"';");
+				strplayerdisplay =  playerdata.get(0).getSymbol() +"-"+playerdata.get(0).getOpttype()+"-"+ playerdata.get(0).getStrike()+"-"+playerdata.get(0).getExpdd()+playerdata.get(0).getExpmmmdd();
+			}
+			if ((playerdata != null) && (playerdata.size() > 0))
+			{
+				dbobj.executeNonQuery(null, "UPDATE TBL_TRADE_LINE SET PLAYERID='"+playerdata.get(0).getSecid()+"', PLAYERDISPLAY='"+strplayerdisplay+"', SYMBOL='"+playerdata.get(0).getSymbol()+"', EXCHANGE ='"+playerdata.get(0).getExchange()+"', INSTRUMENT='"+playerdata.get(0).getInstrument()+"', LOTSIZE='"+playerdata.get(0).getLotsize()+"', "
+						+ "TICKSIZE='"+playerdata.get(0).getTicksize()+"', EXPDD='"+playerdata.get(0).getExpdd()+"', EXPMMMDD='"+playerdata.get(0).getExpmmmdd()+"',OPTTYPE='"+playerdata.get(0).getOpttype()+"', STRIKE='"+playerdata.get(0).getStrike()+"' WHERE ID = "+seedid+"");
+				dbobj.executeNonQuery(null, "UPDATE TBL_TRADE_LINE SET PLAYERDISPLAY='"+strplayerdisplay+"' where ID="+seedid+"");
+				JOptionPane.showMessageDialog(frmcrawler,"Player Updated to Trade Line Identity : "+String.valueOf(id), "INFO",JOptionPane.INFORMATION_MESSAGE);
+			}
+			else
+			{
+				//give warning message box
+				JOptionPane.showMessageDialog(frmcrawler,"No Record Found for given search from Crawler DB, \n Kindly Refresh from Presto Contracts Crawler !! ", "ERROR",JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		catch(Exception ex)
 		{
 			System.out.println(ex.toString());
 		}
 	}
-	public void PlayerEdit()
+	public void PlayerEdit(int id)
 	{
 		try
 		{

@@ -140,6 +140,13 @@ public class DbFuncs {
 		return set;
 	}
 	
+	public String [] loadCentralizedDate()
+	{
+		return getSingleCell(null, "SELECT DATE FROM TBL_CENTRAL_DATE WHERE ID = 1;").split("-");
+		
+	}
+	
+	
 	public List<Scriptsdetail> getContractdata(Connection conn,String Querystr)
 	{
 		
@@ -304,6 +311,43 @@ public class DbFuncs {
 	        }	
 		}
 		return data;
+	}
+	
+	public int getIdentityforInsert(Connection conn, String Query)
+	{
+		int identity=0 ;
+		try {
+			 conn = CheckandConnectDB(conn);
+	         stmt = conn.createStatement(); 
+	         stmt.execute(Query); 
+	         stmt.execute("CALL SCOPE_IDENTITY();");
+	         ResultSet rs =stmt.getResultSet(); 
+	         while (rs.next()) {
+	        	 
+	        	 identity = rs.getInt(1);
+	        	 break;
+	        
+	         }
+	         
+	         if (rs != null) {
+	                rs.close();
+	            }
+		}
+		catch(Exception ex)
+		{
+			identity = 0;
+			Logger.error(ex);
+			System.out.println(ex.getMessage() +"QUERY :"+Query);
+		}
+		finally
+		{
+			try { 
+	            if(stmt!=null) stmt.close(); 
+	         } 
+			catch(SQLException se2) { 
+	         } 
+		}
+		return identity;
 	}
 	
 	public boolean executeNonQuery(Connection conn, String Query)

@@ -109,14 +109,6 @@ public class presto_commons {
 			System.out.print(ex);
 		}
 		connected = esbConnect.getConnectionStatus(USERNAME);
-		if (connected == true)
-		{
-			System.out.print("Is Connected to Broker : "+ connected );
-		}
-		else if (connected == false)
-		{
-			System.out.print("Is Connected to Broker : "+ connected); 
-	    }
 		return connected;
 	}
 	
@@ -126,11 +118,7 @@ public class presto_commons {
 		try
 		{
 			connectionStatus = esbConnect.getConnectionStatus(USERNAME);
-			if (connectionStatus == true)
-			{
-				System.out.print("Is Connected to Broker : "+ connectionStatus );
-			}
-			else if (connectionStatus == false)
+			if (connectionStatus == false)
 			{
 				System.out.print("Is Connected to Broker : "+ logintopresto()); 
 		    }

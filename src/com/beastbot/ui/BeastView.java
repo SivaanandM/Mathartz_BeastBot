@@ -40,6 +40,7 @@ public class BeastView {
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     double width = screenSize.getWidth();
     double height = screenSize.getHeight();
+    
 
 	/**
 	 * Launch the application.
