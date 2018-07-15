@@ -17,6 +17,7 @@ import java.util.Properties;
 import org.pmw.tinylog.*;
 import org.pmw.tinylog.writers.FileWriter;
 
+import com.beastbot.list.BeastViewList;
 import com.beastbot.list.FormulaData;
 import com.beastbot.list.Scriptsdetail;
 
@@ -104,6 +105,41 @@ public class DbFuncs {
 		return rowCount;
 	}
 	
+	public List<BeastViewList> getBeastViewData(Connection conn, String Querystr)
+	{
+		List<BeastViewList> set=new ArrayList<BeastViewList>(); 
+		try {
+			 conn = CheckandConnectDB(conn);
+	         stmt = conn.createStatement();
+	         stmt.execute(Querystr);
+	         ResultSet rs =stmt.getResultSet(); 
+	         while (rs.next()) {
+	        	 BeastViewList record = new BeastViewList(rs.getInt("id"),rs.getString("headdisplay"),rs.getString("F1Point"),rs.getString("F2Point"),rs.getString("F3Point"),rs.getString("F4Point"),rs.getString("F5Point"),rs.getString("playerdisplay"));
+	             set.add(record);
+	         }
+	         
+	         if (rs != null) {
+	                rs.close();
+	            }
+	        
+		}
+		catch(Exception ex){
+			System.out.println(ex.getMessage() +"QUERY :"+Querystr);
+			Logger.error(ex);
+		}
+		finally {
+			try {
+	            
+	            if (stmt != null) {
+	                stmt.close();
+	            }
+	        } catch (SQLException e) {
+	            Logger.error("Ignored", e);
+	        }	
+		}
+		return set;
+	}
+	
 	public List<FormulaData> getFormulaData(Connection conn,String Querystr)
 	{
 		
@@ -158,7 +194,7 @@ public class DbFuncs {
 	         ResultSet rs =stmt.getResultSet(); 
 	         while (rs.next()) {
 	        	 Scriptsdetail record = new Scriptsdetail(rs.getString("SECID"),rs.getString("SYMBOL"),rs.getString("EXCHANGE"),rs.getString("INSTRUMENT")
-	        			 ,rs.getString("LOTSIZE"),rs.getString("TICKSIZE"),rs.getString("EXPDD"),rs.getString(9),rs.getString("OPTTYPE"),rs.getString("STRIKE"));
+	        			 ,rs.getString("LOTSIZE"),rs.getString("TICKSIZE"),rs.getString("EXPDD"),rs.getString("EXPMONTHYEAR"),rs.getString("OPTTYPE"),rs.getString("STRIKE"));
 	             set.add(record);
 	         }
 	         

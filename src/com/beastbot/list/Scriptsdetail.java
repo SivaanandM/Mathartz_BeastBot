@@ -3,8 +3,8 @@ package com.beastbot.list;
 public class Scriptsdetail 
 {
 	String secid;  
-	String symbol,exchange,instrument,lotsize, ticksize,expdd,expmmmdd,opttype,strike ;  
-	public Scriptsdetail(String feedid, String symbol, String exchange, String instrument, String lotsize, String ticksize, String expdd, String expmmmdd, String opttype, String strike ) {  
+	String symbol,exchange,instrument,lotsize, ticksize,expdd,expmonthyear,opttype,strike ;  
+	public Scriptsdetail(String feedid, String symbol, String exchange, String instrument, String lotsize, String ticksize, String expdd, String expmonthyear, String opttype, String strike ) {  
 	    this.secid = feedid;  
 	    this.symbol = symbol;  
 	    this.exchange = exchange;  
@@ -12,7 +12,7 @@ public class Scriptsdetail
 	    this.lotsize = lotsize;  
 	    this.ticksize = ticksize;
 	    this.expdd = expdd;
-	    this.expmmmdd = expmmmdd;  
+	    this.expmonthyear = expmonthyear;  
 	    this.opttype = opttype;  
 	    this.strike = strike;  
   
@@ -46,9 +46,9 @@ public class Scriptsdetail
 	{
 		return expdd;
 	}
-	public String getExpmmmdd()
+	public String getExpmonthyear()
 	{
-		return expmmmdd;
+		return expmonthyear;
 	}
 	public String getOpttype()
 	{

@@ -2,6 +2,8 @@ package com.beastbot.ui;
 
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JFrame;
@@ -13,11 +15,12 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JSlider;
 import javax.swing.JCheckBox;
+import javax.swing.JSeparator;
 
 
 public class Formulations {
 
-	private JFrame paneformula;
+	private JFrame frmformula;
 	private JTextField txtx;
 	private JTextField txty;
 	private JTextField txtsthh;
@@ -29,8 +32,9 @@ public class Formulations {
 	private JTextField txtlcount;
 	private JTextField txtround;
 	private JTextField txtqty;
-	JButton btnDelete;
 	JButton btnsave;
+	String Fname , HeadName, Playername;
+	int Identity;
 	
 
 	/**
@@ -40,8 +44,8 @@ public class Formulations {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Formulations window = new Formulations();
-					window.paneformula.setVisible(true);
+					Formulations window = new Formulations("F1","?","?",1);
+					window.frmformula.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -52,7 +56,13 @@ public class Formulations {
 	/**
 	 * Create the application.
 	 */
-	public Formulations() {
+	public Formulations(String Formula, String Headdisplay, String PLayerdisplay, int id) {
+		Fname =Formula;
+		HeadName = Headdisplay;
+		Playername = PLayerdisplay;
+		Identity = id;
+				
+		
 		initialize();
 	}
 
@@ -63,21 +73,21 @@ public class Formulations {
 		
 		// Formula Pane Format
 		InputHandler keyhand = new InputHandler();
-		paneformula = new JFrame();
-		paneformula.getContentPane().setBackground(new Color(51, 51, 51));
-		paneformula.setVisible(true);
-		paneformula.setTitle("Formula Inputs");
-		paneformula.setBounds(100, 100, 305, 675);
-		paneformula.setBackground(new Color(36,34,29));
-		paneformula.getContentPane().setLayout(null);
-		paneformula.setResizable(false);
+		frmformula = new JFrame("Formula Inputs - "+ Fname);
+		frmformula.getContentPane().setBackground(new Color(51, 51, 51));
+		frmformula.setVisible(true);
+		frmformula.setBounds(100, 100, 305, 685);
+		frmformula.setBackground(new Color(36,34,29));
+		frmformula.getContentPane().setLayout(null);
+		frmformula.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frmformula.setResizable(false);
 		
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
 		panel.setForeground(Color.WHITE);
 		panel.setBackground(new Color(80, 75, 78));
-		panel.setBounds(10, 51, 279, 585);
-		paneformula.getContentPane().add(panel);
+		panel.setBounds(10, 88, 279, 541);
+		frmformula.getContentPane().add(panel);
 		
 		JLabel lblX = new JLabel("X");
 		lblX.setHorizontalAlignment(SwingConstants.LEFT);
@@ -267,13 +277,13 @@ public class Formulations {
 		panel.add(label_18);
 		
 		btnsave = new JButton("SAVE");
-		btnsave.setBounds(162, 522, 104, 45);
+		btnsave.setBounds(10, 484, 256, 45);
 		panel.add(btnsave);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setLayout(null);
 		panel_1.setBackground(new Color(51, 51, 51));
-		panel_1.setBounds(28, 418, 238, 86);
+		panel_1.setBounds(10, 418, 259, 55);
 		panel.add(panel_1);
 		
 		JLabel label_20 = new JLabel("BUY & SELL");
@@ -282,33 +292,51 @@ public class Formulations {
 		label_20.setBounds(0, 0, 0, 0);
 		panel_1.add(label_20);
 		
-		JLabel lblTradeSwitch = new JLabel("Trade Switch");
+		JLabel lblTradeSwitch = new JLabel("Trade");
 		lblTradeSwitch.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTradeSwitch.setForeground(new Color(255, 220, 135));
 		lblTradeSwitch.setFont(new Font("Verdana", Font.PLAIN, 22));
-		lblTradeSwitch.setBounds(40, 11, 158, 24);
+		lblTradeSwitch.setBounds(37, 11, 90, 28);
 		panel_1.add(lblTradeSwitch);
-		
-		JLabel lblon = new JLabel("ON");
-		lblon.setHorizontalAlignment(SwingConstants.CENTER);
-		lblon.setForeground(Color.RED);
-		lblon.setFont(new Font("Verdana", Font.PLAIN, 18));
-		lblon.setBounds(40, 46, 60, 28);
-		panel_1.add(lblon);
 		
 		JLabel lbloff = new JLabel("OFF");
 		lbloff.setHorizontalAlignment(SwingConstants.CENTER);
 		lbloff.setForeground(Color.GREEN);
 		lbloff.setFont(new Font("Verdana", Font.PLAIN, 18));
-		lbloff.setBounds(133, 46, 60, 28);
+		lbloff.setBounds(160, 10, 60, 32);
+		lbloff.setVisible(true);
 		panel_1.add(lbloff);
 		
 		JCheckBox chckbxTradeSwitch = new JCheckBox("");
 		chckbxTradeSwitch.setBackground(new Color(51,51,51));
 		chckbxTradeSwitch.setForeground(new Color(255, 220, 135));
 		chckbxTradeSwitch.setFont(new Font("Verdana", Font.PLAIN, 22));
-		chckbxTradeSwitch.setBounds(106, 42, 21, 32);
+		chckbxTradeSwitch.setBounds(133, 11, 21, 32);
 		panel_1.add(chckbxTradeSwitch);
+		
+		JLabel lblon = new JLabel("ON");
+		lblon.setBounds(160, 10, 60, 32);
+		panel_1.add(lblon);
+		lblon.setHorizontalAlignment(SwingConstants.CENTER);
+		lblon.setForeground(Color.RED);
+		lblon.setFont(new Font("Verdana", Font.PLAIN, 18));
+		lblon.setVisible(false);
+		chckbxTradeSwitch.addItemListener(new ItemListener() {
+		      public void itemStateChanged(ItemEvent e) 
+		      {
+		        System.out.println("Checked? " + chckbxTradeSwitch.isSelected());
+		        if (chckbxTradeSwitch.isSelected())
+		        {
+		        	lblon.setVisible(true);
+		        	lbloff.setVisible(false);
+		        }
+		        else
+		        {
+		        	lblon.setVisible(false);
+		        	lbloff.setVisible(true);
+		        }
+		      }
+		    });
 		
 		JLabel lblQty = new JLabel("QTY");
 		lblQty.setHorizontalAlignment(SwingConstants.LEFT);
@@ -328,18 +356,46 @@ public class Formulations {
 		txtqty.setBounds(143, 366, 104, 41);
 		panel.add(txtqty);
 		
-		btnDelete = new JButton("DELETE");
-		btnDelete.setBounds(23, 522, 110, 45);
-		panel.add(btnDelete);
+		JLabel label = new JLabel("HEAD");
+		label.setHorizontalAlignment(SwingConstants.LEFT);
+		label.setForeground(Color.WHITE);
+		label.setFont(new Font("Verdana", Font.PLAIN, 16));
+		label.setBounds(10, 15, 71, 18);
+		frmformula.getContentPane().add(label);
 		
-		JLabel lblhead = new JLabel("?");
-		lblhead.setHorizontalAlignment(SwingConstants.CENTER);
-		lblhead.setForeground(new Color(255, 220, 135));
-		lblhead.setFont(new Font("Verdana", Font.BOLD, 22));
-		lblhead.setBounds(0, -1, 297, 43);
-		paneformula.getContentPane().add(lblhead);
-		paneformula.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		paneformula.addKeyListener(keyhand);
+		JLabel lblheadname = new JLabel(HeadName);
+		lblheadname.setHorizontalAlignment(SwingConstants.LEFT);
+		lblheadname.setForeground(new Color(255, 220, 135));
+		lblheadname.setFont(new Font("Verdana", Font.PLAIN, 14));
+		lblheadname.setBounds(86, 11, 203, 29);
+		frmformula.getContentPane().add(lblheadname);
+		
+		JSeparator separator = new JSeparator();
+		separator.setOrientation(SwingConstants.VERTICAL);
+		separator.setForeground(Color.WHITE);
+		separator.setBounds(79, 15, 2, 72);
+		frmformula.getContentPane().add(separator);
+		
+		JLabel label_2 = new JLabel("PLAYER");
+		label_2.setHorizontalAlignment(SwingConstants.LEFT);
+		label_2.setForeground(Color.WHITE);
+		label_2.setFont(new Font("Verdana", Font.PLAIN, 16));
+		label_2.setBounds(10, 57, 77, 18);
+		frmformula.getContentPane().add(label_2);
+		
+		JLabel lblplayername = new JLabel(Playername);
+		lblplayername.setHorizontalAlignment(SwingConstants.LEFT);
+		lblplayername.setForeground(new Color(255, 220, 135));
+		lblplayername.setFont(new Font("Verdana", Font.PLAIN, 14));
+		lblplayername.setBounds(86, 51, 203, 32);
+		frmformula.getContentPane().add(lblplayername);
+		
+		JSeparator separator_1 = new JSeparator();
+		separator_1.setForeground(Color.WHITE);
+		separator_1.setBounds(10, 44, 279, 9);
+		frmformula.getContentPane().add(separator_1);
+		frmformula.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frmformula.addKeyListener(keyhand);
 	}
 	
 	
@@ -354,7 +410,7 @@ public class Formulations {
 		        {
 		        		if (evt.getKeyCode() == KeyEvent.VK_ESCAPE)
 		        		{
-		        			paneformula.dispose();
+		        			frmformula.dispose();
 		            }
 		        }
 	        

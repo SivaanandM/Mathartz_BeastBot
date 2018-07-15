@@ -2,12 +2,14 @@ package com.beastbot.ui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -23,6 +25,9 @@ public class TradeInsight {
 	String col[]= {"ORDER TYPE","TIME","PRICE"};
 	private JTable tblinsights;
 	TableModel modelinsights;
+	String headname, playername, fname;
+	int identity;
+	private static int HEADER_HEIGHT = 25;
 	/**
 	 * Launch the application.
 	 */
@@ -30,7 +35,7 @@ public class TradeInsight {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					TradeInsight window = new TradeInsight();
+					TradeInsight window = new TradeInsight("F1", "?", "?", 1);
 					window.frmtradeinsight.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -42,7 +47,11 @@ public class TradeInsight {
 	/**
 	 * Create the application.
 	 */
-	public TradeInsight() {
+	public TradeInsight(String formula, String Heeddisplay, String playerdisplay, int id) {
+		fname = formula;
+		headname=Heeddisplay;
+		playername=playerdisplay;
+		identity = id;
 		initialize();
 	}
 
@@ -51,10 +60,11 @@ public class TradeInsight {
 	 */
 	private void initialize() {
 		frmtradeinsight = new JFrame();
-		frmtradeinsight.setTitle("Trade Insight");
+		frmtradeinsight.setTitle("Trade Insight - "+fname);
 		frmtradeinsight.setBounds(100, 100, 444, 491);
-		frmtradeinsight.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmtradeinsight.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frmtradeinsight.getContentPane().setBackground(new Color(51,51,51));
+		frmtradeinsight.setVisible(true);
 		
 		tblinsights = new JTable();
 		tblinsights.setBounds(10, 559, 923, -345);
@@ -81,11 +91,14 @@ public class TradeInsight {
 		        return false; //To change body of generated methods, choose Tools | Templates.
 		    }   
 		};
+		tblinsights.setBorder(null);
 		
 		
 		JTableHeader header = tblinsights.getTableHeader();
-		header.setForeground(new Color(36,34,29));
-	    header.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		header.setForeground(new Color(255, 220, 135));
+		header.setBackground(new Color(51, 51, 51));
+	    header.setFont(new Font("Tahoma", Font.BOLD, 14));
+	    header.setPreferredSize(new Dimension(100, HEADER_HEIGHT));
 	    frmtradeinsight.getContentPane().setLayout(null);
 	    JScrollPane scrollPane = new JScrollPane(tblinsights);
 	    scrollPane.setBounds(10, 84, 408, 356);
@@ -94,6 +107,8 @@ public class TradeInsight {
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setViewportBorder(null);
 		scrollPane.setBorder(null);
+		scrollPane.getViewport().setBackground(new Color(51, 51, 51));
+		
 		
 		JSeparator separator = new JSeparator();
 		separator.setOrientation(SwingConstants.VERTICAL);
@@ -115,19 +130,24 @@ public class TradeInsight {
 		lblPlayer.setBounds(227, 11, 191, 18);
 		frmtradeinsight.getContentPane().add(lblPlayer);
 		
-		JLabel lblhead = new JLabel("?");
+		JLabel lblhead = new JLabel(headname);
 		lblhead.setHorizontalAlignment(SwingConstants.CENTER);
 		lblhead.setForeground(new Color(255, 220, 135));
-		lblhead.setFont(new Font("Verdana", Font.PLAIN, 16));
-		lblhead.setBounds(10, 43, 191, 18);
+		lblhead.setFont(new Font("Verdana", Font.PLAIN, 14));
+		lblhead.setBounds(10, 55, 191, 18);
 		frmtradeinsight.getContentPane().add(lblhead);
 		
-		JLabel lblplayer = new JLabel("?");
+		JLabel lblplayer = new JLabel(playername);
 		lblplayer.setHorizontalAlignment(SwingConstants.CENTER);
 		lblplayer.setForeground(new Color(255, 220, 135));
-		lblplayer.setFont(new Font("Verdana", Font.PLAIN, 16));
-		lblplayer.setBounds(231, 47, 191, 18);
+		lblplayer.setFont(new Font("Verdana", Font.PLAIN, 14));
+		lblplayer.setBounds(227, 55, 191, 18);
 		frmtradeinsight.getContentPane().add(lblplayer);
+		
+		JSeparator separator_1 = new JSeparator();
+		separator_1.setForeground(Color.WHITE);
+		separator_1.setBounds(20, 40, 398, 7);
+		frmtradeinsight.getContentPane().add(separator_1);
 
 	}
 }

@@ -33,6 +33,7 @@ import com.beastbot.list.*;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -53,6 +54,7 @@ public class ScriptSearch {
 	presto_commons objpresto;
 	TableModel model;
 	DbFuncs objdb;
+	private static int HEADER_HEIGHT = 25;
 	String col[]= {"SEC-ID","SYMBOL","EXCHANGE","INSTRUMENTS","LOT-SIZE","TICK-SIZE","EXPIRY-DD","EXPIRY-MMMYY","OPT-TYPE","STRIKE"};
 
 	/**
@@ -62,7 +64,7 @@ public class ScriptSearch {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ScriptSearch window = new ScriptSearch();
+					ScriptSearch window = new ScriptSearch(null);
 					window.frmScriptSearch.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -74,8 +76,17 @@ public class ScriptSearch {
 	/**
 	 * Create the application.
 	 */
-	public ScriptSearch() {
+	public ScriptSearch(presto_commons obj) 
+	{
 		objdb = new DbFuncs();
+		if (obj == null)
+		{
+			objpresto = new presto_commons();
+		}
+		else
+		{
+			objpresto = obj;
+		}
 		initialize();
 	}
 
@@ -83,7 +94,8 @@ public class ScriptSearch {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		objpresto=new com.beastbot.presto.presto_commons();
+		
+		
 		renderControl();
 		
 	}
@@ -115,11 +127,12 @@ public class ScriptSearch {
 		try	
 		{
 			frmScriptSearch = new JFrame();
+			frmScriptSearch.setVisible(true);
 			frmScriptSearch.setTitle("Presto Contract Crawler");
 			frmScriptSearch.getContentPane().setBackground(new Color(51,51,51));
 			frmScriptSearch.getContentPane().setLayout(new BorderLayout(0, 0));
 			frmScriptSearch.setBounds(100, 100, 945, 629);
-			frmScriptSearch.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frmScriptSearch.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			frmScriptSearch.setResizable(false);
 			
 			JLabel lblScriptsCrawler = new JLabel("Sec-Id Crawler");
@@ -220,7 +233,7 @@ public class ScriptSearch {
 					if ((records != null) && (records.size() > 0))
 					{
 						objdb.executeNonQuery(null, "DELETE FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+textSymbol.getText()+"' and INSTRUMENT='FUTIDX';");
-						objdb.executeNonQuery(null, "DELETE FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+textSymbol.getText()+"' and EXPMMMYY='"+txtExpmm.getText()+txtExpyyyy.getText()+"';");
+						objdb.executeNonQuery(null, "DELETE FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+textSymbol.getText()+"' and EXPMONTHYEAR='"+txtExpmm.getText()+txtExpyyyy.getText()+"';");
 						
 						String [][] values = new String[records.size()][10];
 						for(int i=0; i < records.size(); i++)
@@ -233,11 +246,11 @@ public class ScriptSearch {
 							values[i][4] = records.get(i).getLotsize();
 							values[i][5] = records.get(i).getTicksize();
 							values[i][6] = records.get(i).getExpdd();
-							values[i][7] = records.get(i).getExpmmmdd();
+							values[i][7] = records.get(i).getExpmonthyear();
 							values[i][8] = records.get(i).getOpttype();
 							values[i][9] = records.get(i).getStrike();
 							
-							batchstmt[i] = "INSERT INTO TBL_MASTER_CONTRACTS (SECID, SYMBOL, EXCHANGE, INSTRUMENT, LOTSIZE, TICKSIZE, EXPDD, EXPMMMYY, OPTTYPE, STRIKE) "
+							batchstmt[i] = "INSERT INTO TBL_MASTER_CONTRACTS (SECID, SYMBOL, EXCHANGE, INSTRUMENT, LOTSIZE, TICKSIZE, EXPDD, EXPMONTHYEAR, OPTTYPE, STRIKE) "
 									+ "VALUES ('"+values[i][0]+"','"+values[i][1]+"','"+values[i][2]+"','"+values[i][3]+"','"+values[i][4]+"'"
 											+ ",'"+values[i][5]+"','"+values[i][6]+"','"+values[i][7]+"','"+values[i][8]+"','"+values[i][9]+"');";
 							
@@ -302,25 +315,23 @@ public class ScriptSearch {
 			    }   
 			};
 			
-			
 			JTableHeader header = table.getTableHeader();
-			header.setForeground(new Color(36,34,29));
-		    header.setFont(new Font("Tahoma", Font.PLAIN, 11));
+			header.setForeground(new Color(255, 220, 135));
+			header.setBackground(new Color(51, 51, 51));
+		    header.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		    header.setPreferredSize(new Dimension(100, HEADER_HEIGHT));
 		    JScrollPane scrollPane = new JScrollPane(table);
 		    scrollPane.setBounds(22, 185, 897, 367);
 		    pnlmiddle.add(scrollPane);
 		    scrollPane.setEnabled(false);
 			scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 			scrollPane.setViewportBorder(null);
-			scrollPane.setBorder(null);
-			//.add(table);
+			scrollPane.getViewport().setBackground(new Color(51, 51, 51));
+			
 			
 			JSeparator separator = new JSeparator();
 			separator.setBounds(22, 166, 897, 20);
 			pnlmiddle.add(separator);
-			
-			
-			
 			
 		}
 		catch(Exception ex)

@@ -52,7 +52,7 @@ public class Crawler {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Crawler window = new Crawler("add","player",16);
+					Crawler window = new Crawler("EDIT","head",1);
 					window.frmcrawler.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -72,6 +72,32 @@ public class Crawler {
 		dbobj = new DbFuncs();
 		centraldate = dbobj.loadCentralizedDate();
 		initialize();
+		List<Scriptsdetail> data=null;
+		if (operation.toUpperCase().equals("EDIT"))
+		{
+			String[] value = dbobj.getSingleCell(null, "SELECT HEADDISPLAY FROM TBL_TRADE_LINE WHERE ID ="+seedid+";").split("-");
+			if (value.length == 2)
+			{
+				pnlopt.setVisible(false);
+				pnlfut.setVisible(true);
+				cmbinstrument.setSelectedItem("FUT");
+				txtsymbol.setText(value[0]);
+				txtfutmmm.setText(value[1].substring(0, 3));
+				txtfutyy.setText(value[1].substring(3, 5));
+			}
+			else
+			{
+				pnlopt.setVisible(true);
+				pnlfut.setVisible(false);
+				cmbinstrument.setSelectedItem("OPT");
+				txtsymbol.setText(value[0]);
+				cmbright.setSelectedItem(value[1]);
+				txtstrike.setText(value[2]);
+				txtoptdd.setText(value[3].substring(0, 2));
+				txtoptmm.setText(value[3].substring(2, 5));
+				txtoptyy.setText(value[3].substring(5, 7));
+			}
+		}
 	}
 
 	/**
@@ -328,15 +354,15 @@ public class Crawler {
 			{
 				// Getting Contract Detail for Head FUT
 				headdata = dbobj.getContractdata(null, "SELECT * FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+ txtsymbol.getText()+"'"
-						+ " and INSTRUMENT='FUTIDX' and EXPMMMYY='"+txtfutmmm.getText()+txtfutyy.getText()+"';");
-				strheaddisplay = headdata.get(0).getSymbol() +"-"+headdata.get(0).getExpmmmdd();
+						+ " and INSTRUMENT='FUTIDX' and EXPMONTHYEAR='"+txtfutmmm.getText()+txtfutyy.getText()+"';");
+				strheaddisplay = headdata.get(0).getSymbol() +"-"+headdata.get(0).getExpmonthyear();
 			}
 			else if (cmbinstrument.getSelectedItem()=="OPT")
 			{
 				// Getting Contract Detail for Head OPT
 				headdata = dbobj.getContractdata(null, "SELECT * FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+ txtsymbol.getText()+"'"
-						+ " and INSTRUMENT='OPTIDX' and STRIKE ='"+txtstrike.getText()+"' and OPTTYPE='"+cmbright.getSelectedItem()+"' and EXPDD='"+txtoptdd.getText()+"' and EXPMMMYY='"+txtoptmm.getText()+txtoptyy.getText()+"';");
-				strheaddisplay =  headdata.get(0).getSymbol() +"-"+headdata.get(0).getOpttype()+"-"+ headdata.get(0).getStrike()+"-"+headdata.get(0).getExpdd()+headdata.get(0).getExpmmmdd();
+						+ " and INSTRUMENT='OPTIDX' and STRIKE ='"+txtstrike.getText()+"' and OPTTYPE='"+cmbright.getSelectedItem()+"' and EXPDD='"+txtoptdd.getText()+"' and EXPMONTHYEAR='"+txtoptmm.getText()+txtoptyy.getText()+"';");
+				strheaddisplay =  headdata.get(0).getSymbol() +"-"+headdata.get(0).getOpttype()+"-"+ headdata.get(0).getStrike()+"-"+headdata.get(0).getExpdd()+headdata.get(0).getExpmonthyear();
 			}
 			if ((headdata != null) && (headdata.size() > 0))
 			{
@@ -360,7 +386,34 @@ public class Crawler {
 	{
 		try
 		{
-			
+			int identity;
+			String strheaddisplay="";
+			List<Scriptsdetail> headdata = null;
+			if (cmbinstrument.getSelectedItem()=="FUT")
+			{
+				// Getting Contract Detail for Head FUT
+				headdata = dbobj.getContractdata(null, "SELECT * FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+ txtsymbol.getText()+"'"
+						+ " and INSTRUMENT='FUTIDX' and EXPMONTHYEAR='"+txtfutmmm.getText()+txtfutyy.getText()+"';");
+				strheaddisplay = headdata.get(0).getSymbol() +"-"+headdata.get(0).getExpmonthyear();
+			}
+			else if (cmbinstrument.getSelectedItem()=="OPT")
+			{
+				// Getting Contract Detail for Head OPT
+				headdata = dbobj.getContractdata(null, "SELECT * FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+ txtsymbol.getText()+"'"
+						+ " and INSTRUMENT='OPTIDX' and STRIKE ='"+txtstrike.getText()+"' and OPTTYPE='"+cmbright.getSelectedItem()+"' and EXPDD='"+txtoptdd.getText()+"' and EXPMONTHYEAR='"+txtoptmm.getText()+txtoptyy.getText()+"';");
+				strheaddisplay =  headdata.get(0).getSymbol() +"-"+headdata.get(0).getOpttype()+"-"+ headdata.get(0).getStrike()+"-"+headdata.get(0).getExpdd()+headdata.get(0).getExpmonthyear();
+			}
+			if ((headdata != null) && (headdata.size() > 0))
+			{
+				 dbobj.executeNonQuery(null, "UPDATE TBL_TRADE_LINE SET HEADDISPLAY='"+strheaddisplay+"', HEADSYMBOL='"+headdata.get(0).getSymbol()+"' WHERE ID ="+id+";");
+				 dbobj.executeNonQuery(null, "UPDATE TBL_BEAST_VIEW SET HEADDISPLAY='"+strheaddisplay+"' WHERE ID ="+id+";");
+				JOptionPane.showMessageDialog(frmcrawler,"Head updated to Trade Line Identity : "+String.valueOf(id), "INFO",JOptionPane.INFORMATION_MESSAGE);
+			}
+			else
+			{
+				//give warning message box
+				JOptionPane.showMessageDialog(frmcrawler,"No Record Found for given search from Crawler DB, \n Kindly Refresh from Presto Contracts Crawler !! ", "ERROR",JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		catch(Exception ex)
 		{
@@ -378,21 +431,21 @@ public class Crawler {
 			{
 				// Getting Contract Detail for PLAYER FUT
 				playerdata = dbobj.getContractdata(null, "SELECT * FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+ txtsymbol.getText()+"'"
-						+ " and INSTRUMENT='FUTIDX' and EXPMMMYY='"+txtfutmmm.getText()+txtfutyy.getText()+"';");
-				strplayerdisplay = playerdata.get(0).getSymbol() +"-"+playerdata.get(0).getExpmmmdd();
+						+ " and INSTRUMENT='FUTIDX' and EXPMONTHYEAR='"+txtfutmmm.getText()+txtfutyy.getText()+"';");
+				strplayerdisplay = playerdata.get(0).getSymbol() +"-"+playerdata.get(0).getExpmonthyear();
 			}
 			else if (cmbinstrument.getSelectedItem()=="OPT")
 			{
 				// Getting Contract Detail for Player OPT
 				playerdata = dbobj.getContractdata(null, "SELECT * FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+ txtsymbol.getText()+"'"
-						+ " and INSTRUMENT='OPTIDX' and STRIKE ='"+txtstrike.getText()+"' and OPTTYPE='"+cmbright.getSelectedItem()+"' and EXPDD='"+txtoptdd.getText()+"' and EXPMMMYY='"+txtoptmm.getText()+txtoptyy.getText()+"';");
-				strplayerdisplay =  playerdata.get(0).getSymbol() +"-"+playerdata.get(0).getOpttype()+"-"+ playerdata.get(0).getStrike()+"-"+playerdata.get(0).getExpdd()+playerdata.get(0).getExpmmmdd();
+						+ " and INSTRUMENT='OPTIDX' and STRIKE ='"+txtstrike.getText()+"' and OPTTYPE='"+cmbright.getSelectedItem()+"' and EXPDD='"+txtoptdd.getText()+"' and EXPMONTHYEAR='"+txtoptmm.getText()+txtoptyy.getText()+"';");
+				strplayerdisplay =  playerdata.get(0).getSymbol() +"-"+playerdata.get(0).getOpttype()+"-"+ playerdata.get(0).getStrike()+"-"+playerdata.get(0).getExpdd()+playerdata.get(0).getExpmonthyear();
 			}
 			if ((playerdata != null) && (playerdata.size() > 0))
 			{
 				dbobj.executeNonQuery(null, "UPDATE TBL_TRADE_LINE SET PLAYERID='"+playerdata.get(0).getSecid()+"', PLAYERDISPLAY='"+strplayerdisplay+"', SYMBOL='"+playerdata.get(0).getSymbol()+"', EXCHANGE ='"+playerdata.get(0).getExchange()+"', INSTRUMENT='"+playerdata.get(0).getInstrument()+"', LOTSIZE='"+playerdata.get(0).getLotsize()+"', "
-						+ "TICKSIZE='"+playerdata.get(0).getTicksize()+"', EXPDD='"+playerdata.get(0).getExpdd()+"', EXPMMMDD='"+playerdata.get(0).getExpmmmdd()+"',OPTTYPE='"+playerdata.get(0).getOpttype()+"', STRIKE='"+playerdata.get(0).getStrike()+"' WHERE ID = "+seedid+"");
-				dbobj.executeNonQuery(null, "UPDATE TBL_TRADE_LINE SET PLAYERDISPLAY='"+strplayerdisplay+"' where ID="+seedid+"");
+						+ "TICKSIZE='"+playerdata.get(0).getTicksize()+"', EXPDD='"+playerdata.get(0).getExpdd()+"', EXPMONTHYEAR='"+playerdata.get(0).getExpmonthyear()+"',OPTTYPE='"+playerdata.get(0).getOpttype()+"', STRIKE='"+playerdata.get(0).getStrike()+"' WHERE ID = "+seedid+"");
+				dbobj.executeNonQuery(null, "UPDATE TBL_BEAST_VIEW SET PLAYERDISPLAY='"+strplayerdisplay+"' where ID="+seedid+"");
 				JOptionPane.showMessageDialog(frmcrawler,"Player Updated to Trade Line Identity : "+String.valueOf(id), "INFO",JOptionPane.INFORMATION_MESSAGE);
 			}
 			else
@@ -410,7 +463,7 @@ public class Crawler {
 	{
 		try
 		{
-			
+			PlayerAdd(id);
 		}
 		catch(Exception ex)
 		{
