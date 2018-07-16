@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.Connection;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -19,6 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.JTextField;
 import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
@@ -32,6 +35,7 @@ import java.awt.FlowLayout;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import javax.swing.table.JTableHeader;
@@ -61,7 +65,6 @@ public class BeastView implements KeyListener{
     double height = screenSize.getHeight();
     String [] centraldate ;
     DbFuncs dbobj;
-    //private JPanel mainTable;
     private JScrollPane scrollPane; 
     private JTable maintable;
     private JPanel pnlmiddle;
@@ -70,6 +73,10 @@ public class BeastView implements KeyListener{
     List<BeastViewList> ViewList ;
     private static int HEADER_HEIGHT = 32;
     presto_commons objpresto;
+    TableColumnModel columnModel;
+    DefaultTableCellRenderer renderer;
+    Boolean isRunning = false;
+    Connection h2con=null;
     
 
 	/**
@@ -94,9 +101,10 @@ public class BeastView implements KeyListener{
 	public BeastView() 
 	{
 		dbobj = new DbFuncs();
+		h2con = dbobj.CheckandConnectDB(h2con);
 		objpresto = new presto_commons();
-		centraldate = dbobj.loadCentralizedDate();
-		ViewList = dbobj.getBeastViewData(null, "SELECT * FROM TBL_BEAST_VIEW ORDER BY ID;");
+		centraldate = dbobj.loadCentralizedDate(h2con);
+		ViewList = dbobj.getBeastViewData(h2con, "SELECT * FROM TBL_BEAST_VIEW ORDER BY ID;");
 		initialize();
 	}
 
@@ -142,7 +150,7 @@ public class BeastView implements KeyListener{
 		txtdd.setBounds(0, 0, 0, 0);
 		txtdd.setHorizontalAlignment(SwingConstants.CENTER);
 		txtdd.setForeground(new Color(255, 220, 135));
-		txtdd.setFont(new Font("Verdana", Font.PLAIN, 20));
+		txtdd.setFont(new Font("Verdana", Font.PLAIN, 16));
 		txtdd.setColumns(2);
 		txtdd.setCaretColor(Color.WHITE);
 		txtdd.setBackground(new Color(80,75,78));
@@ -151,7 +159,7 @@ public class BeastView implements KeyListener{
 		txtmmm.setBounds(0, 0, 0, 0);
 		txtmmm.setHorizontalAlignment(SwingConstants.CENTER);
 		txtmmm.setForeground(new Color(255, 220, 135));
-		txtmmm.setFont(new Font("Verdana", Font.PLAIN, 20));
+		txtmmm.setFont(new Font("Verdana", Font.PLAIN, 16));
 		txtmmm.setColumns(3);
 		txtmmm.setCaretColor(Color.WHITE);
 		txtmmm.setBackground(new Color(80,75,78));
@@ -160,14 +168,12 @@ public class BeastView implements KeyListener{
 		txtyy.setBounds(0, 0, 0, 0);
 		txtyy.setHorizontalAlignment(SwingConstants.CENTER);
 		txtyy.setForeground(new Color(255, 220, 135));
-		txtyy.setFont(new Font("Verdana", Font.PLAIN, 20));
+		txtyy.setFont(new Font("Verdana", Font.PLAIN, 16));
 		txtyy.setColumns(2);
 		txtyy.setCaretColor(Color.WHITE);
 		txtyy.setBackground(new Color(80,75,78));
 		
 		JPanel pnldowncenter = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) pnldowncenter.getLayout();
-		flowLayout.setAlignment(FlowLayout.RIGHT);
 		pnldowncenter.setBackground(new Color(51, 51, 51));
 		//float s =(((int) width) - ((int) width)/9);
 		pnldowncenter.setPreferredSize(new Dimension((((int) width) - ((int) width)/3), 60));
@@ -180,29 +186,47 @@ public class BeastView implements KeyListener{
 			}
 		});
 		btnrun.setPreferredSize(new Dimension(150, 35));
-		btnrun.setBounds(531, 937, 150, 34);
-		pnldowncenter.add(btnrun);
 		
 		btndcsv = new JButton("D-CSV");
 		btndcsv.setPreferredSize(new Dimension(150, 35));
-		btndcsv.setBounds(687, 936, 150, 35);
-		pnldowncenter.add(btndcsv);
 		
 		btnclear = new JButton("CLEAR");
 		btnclear.setPreferredSize(new Dimension(150, 35));
-		btnclear.setBounds(999, 936, 150, 35);
-		pnldowncenter.add(btnclear);
 		
 		btnstop = new JButton("STOP");
 		btnstop.setPreferredSize(new Dimension(150, 35));
-		btnstop.setBounds(843, 936, 150, 35);
-		pnldowncenter.add(btnstop);
+		GroupLayout gl_pnldowncenter = new GroupLayout(pnldowncenter);
+		gl_pnldowncenter.setHorizontalGroup(
+			gl_pnldowncenter.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_pnldowncenter.createSequentialGroup()
+					.addGap(((int)width/4)-150)
+					.addComponent(btnrun, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(btndcsv, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(btnclear, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(btnstop, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(399))
+		);
+		gl_pnldowncenter.setVerticalGroup(
+			gl_pnldowncenter.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_pnldowncenter.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_pnldowncenter.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btndcsv, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnrun, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnclear, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnstop, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(14, Short.MAX_VALUE))
+		);
+		pnldowncenter.setLayout(gl_pnldowncenter);
 		
 		JButton btndatefix = new JButton("FIX");
 		btndatefix.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) 
 			{
-				Boolean done = dbobj.executeNonQuery(null, "UPDATE TBL_CENTRAL_DATE  SET DATE = '"+txtdd.getText()+"-"+txtmmm.getText()+"-"+txtyy.getText()+"'");
+				Boolean done = dbobj.executeNonQuery(h2con, "UPDATE TBL_CENTRAL_DATE  SET DATE = '"+txtdd.getText()+"-"+txtmmm.getText()+"-"+txtyy.getText()+"'");
 				JOptionPane.showMessageDialog(frmBeastview,"Date Centralized  : "+String.valueOf(done), "INFO",JOptionPane.INFORMATION_MESSAGE);
 				
 			}
@@ -216,25 +240,24 @@ public class BeastView implements KeyListener{
 			gl_pnldown.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_pnldown.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(txtdd, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(txtdd, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(txtmmm, GroupLayout.PREFERRED_SIZE, 59, GroupLayout.PREFERRED_SIZE)
+					.addComponent(txtmmm, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(txtyy, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
+					.addComponent(txtyy, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btndatefix, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+					.addComponent(btndatefix, GroupLayout.DEFAULT_SIZE, 56, Short.MAX_VALUE)
+					.addContainerGap())
 		);
 		gl_pnldown.setVerticalGroup(
 			gl_pnldown.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_pnldown.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_pnldown.createParallelGroup(Alignment.TRAILING)
-						.addComponent(btndatefix, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
-						.addGroup(Alignment.LEADING, gl_pnldown.createParallelGroup(Alignment.BASELINE)
-							.addComponent(txtdd, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
-							.addComponent(txtmmm, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
-							.addComponent(txtyy, GroupLayout.PREFERRED_SIZE, 41, GroupLayout.PREFERRED_SIZE)))
+					.addGroup(gl_pnldown.createParallelGroup(Alignment.LEADING)
+						.addComponent(btndatefix, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+						.addComponent(txtyy, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+						.addComponent(txtmmm, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+						.addComponent(txtdd, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		pnldownleft.setLayout(gl_pnldown);
@@ -266,7 +289,6 @@ public class BeastView implements KeyListener{
 	    maintable.setFont(new Font("Tahoma", Font.BOLD, 14));
 	    mainmodel = new BeastViewListTableModel(ViewList);
 	    
-	   // mainmodel = new DefaultTableModel(ViewList, col);
 		maintable = new JTable(mainmodel){
 		    public Component prepareRenderer(TableCellRenderer renderer, int row, int column){
 		        Component returnComp = super.prepareRenderer(renderer, row, column);
@@ -288,7 +310,9 @@ public class BeastView implements KeyListener{
 		maintable.setBorder(null);
 		maintable.setBackground(Color.GRAY);
 		maintable.setRowHeight(25);
-		TableColumnModel columnModel = maintable.getColumnModel();
+		maintable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		maintable.setRowSelectionAllowed(true);
+		columnModel = maintable.getColumnModel();
 		columnModel.getColumn(0).setPreferredWidth(5);
 		columnModel.getColumn(1).setPreferredWidth(200);
 		columnModel.getColumn(2).setPreferredWidth(100);
@@ -299,7 +323,7 @@ public class BeastView implements KeyListener{
 		columnModel.getColumn(7).setPreferredWidth(200);
 		maintable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		
-		DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+		renderer = new DefaultTableCellRenderer();
 	    renderer.setHorizontalAlignment(JLabel.CENTER);
 	    columnModel.getColumn(0).setCellRenderer(renderer);
 	    columnModel.getColumn(2).setCellRenderer(renderer);
@@ -321,7 +345,7 @@ public class BeastView implements KeyListener{
 	    scrollPane.setBackground(new Color(51, 51, 51));
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setViewportBorder(null);
-		scrollPane.setPreferredSize(new Dimension((int)width-25, (int)height-200));
+		scrollPane.setPreferredSize(new Dimension((int)width-25, (int)height-175));
 		scrollPane.setBorder(null);
 		scrollPane.setColumnHeaderView(new JViewport() {
 		      @Override public Dimension getPreferredSize() {
@@ -331,6 +355,85 @@ public class BeastView implements KeyListener{
 		        }
 		      });
 		
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				try
+				{
+					Timer timer = new Timer(0, new ActionListener() {
+
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+							try
+							{
+								int selectedrow = maintable.getSelectedRow();
+            		            if (selectedrow != -1)
+            		            {
+            		            		selectedrow = maintable.getSelectedRow();
+            		            }
+            		            // Need to Right logic for refresh maintable
+            		            if (isRunning == false)
+            		            {
+            		            	ViewList = dbobj.getBeastViewData(h2con, "SELECT * FROM TBL_BEAST_VIEW ORDER BY ID;");
+            		            }
+            		            mainmodel =new  BeastViewListTableModel(ViewList);
+            		            maintable.setModel(mainmodel);
+            		            columnModel = maintable.getColumnModel();
+            		    		columnModel.getColumn(0).setPreferredWidth(5);
+            		    		columnModel.getColumn(1).setPreferredWidth(200);
+            		    		columnModel.getColumn(2).setPreferredWidth(100);
+            		    		columnModel.getColumn(3).setPreferredWidth(100);
+            		    		columnModel.getColumn(4).setPreferredWidth(100);
+            		    		columnModel.getColumn(5).setPreferredWidth(100);
+            		    		columnModel.getColumn(6).setPreferredWidth(100);
+            		    		columnModel.getColumn(7).setPreferredWidth(200);
+            		    		maintable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+            		    		
+            		    		renderer = new DefaultTableCellRenderer();
+            		    	    renderer.setHorizontalAlignment(JLabel.CENTER);
+            		    	    columnModel.getColumn(0).setCellRenderer(renderer);
+            		    	    columnModel.getColumn(2).setCellRenderer(renderer);
+            		    	    columnModel.getColumn(3).setCellRenderer(renderer);
+            		    	    columnModel.getColumn(4).setCellRenderer(renderer);
+            		    	    columnModel.getColumn(5).setCellRenderer(renderer);
+            		    	    columnModel.getColumn(6).setCellRenderer(renderer);
+            		     		
+            		     		
+            		            if (selectedrow != -1)
+					            {
+							    	 if (maintable.getRowCount() > 0)
+							    	 {
+							    		 try
+							    		 {
+							    			 maintable.setRowSelectionInterval(selectedrow, selectedrow);
+							    		 }
+							    		 catch(Exception ex)
+							    		 {
+							    			 
+							    		 }
+							    	 }
+					            } 
+							}
+							catch(Exception ex)
+							{
+								System.out.println(ex.toString());
+							}
+						}
+						
+					});
+					timer.setDelay(1000); // delay for 30 seconds
+            		timer.start();
+				}
+				catch(Exception ex)
+				{
+					System.out.println(ex.toString());
+				}
+			}
+		});
+		
+		
+	
 		maintable.addKeyListener(new KeyAdapter() {
 		      public void keyPressed(KeyEvent e) 
 		      {
@@ -354,21 +457,23 @@ public class BeastView implements KeyListener{
 			          }
 			    	  if (e.isControlDown() && e.getKeyCode() == 80) 
 					  {
-			    		  //CTRL+ H
-							Crawler playeradd=new Crawler("add", "head", 0);
+			    		  //CTRL+ p
+							Crawler playeradd=new Crawler("add", "player", (int)maintable.getValueAt(maintable.getSelectedRow(),0));
 			          }
 			    	  if (e.isAltDown() && e.getKeyCode() == 80) 
 					  {
 			    		  if (maintable.getSelectedRowCount() == 1)
 				    	  {
-			    			  //ALT + H
-			    			  Crawler playeredit=new Crawler("edit", "head", (int)maintable.getValueAt(maintable.getSelectedRow(),0));
+			    			  //ALT + p
+			    			  Crawler playeredit=new Crawler("edit", "player", (int)maintable.getValueAt(maintable.getSelectedRow(),0));
 				    	  }
 				    	  else
 				    	  {
 				    		  JOptionPane.showMessageDialog(frmBeastview, "Kindly Select One Row...", "INFO",JOptionPane.INFORMATION_MESSAGE);
 				    	  }
 			          }
+			    	  
+			    	  
 			    	  if (e.isControlDown() && e.getKeyCode() == 49) 
 					  {
 			    		  if (maintable.getSelectedRowCount() == 1)
@@ -438,27 +543,82 @@ public class BeastView implements KeyListener{
 			    	  if ( e.getKeyCode() == 112) 
 					  {
 			    		  //F1
-			    		  Formulations objF1=new Formulations("F1",maintable.getValueAt(maintable.getSelectedRow(),1).toString(), maintable.getValueAt(maintable.getSelectedRow(),7).toString(), (int)(maintable.getValueAt(maintable.getSelectedRow(),0)));
+			    		  if (maintable.getSelectedRowCount() == 1)
+				    	  {
+			    			  Formulations objF1=new Formulations("F1",maintable.getValueAt(maintable.getSelectedRow(),1).toString(), maintable.getValueAt(maintable.getSelectedRow(),7).toString(), (int)(maintable.getValueAt(maintable.getSelectedRow(),0)));
+				    	  }
+				    	  else
+				    	  {
+				    		  JOptionPane.showMessageDialog(frmBeastview, "Kindly Select One Row...", "INFO",JOptionPane.INFORMATION_MESSAGE);
+				    	  }
 			          }
 			    	  if ( e.getKeyCode() == 113) 
 					  {
+			    		  if (maintable.getSelectedRowCount() == 1)
+				    	  {
 			    		  //F2
 			    		  Formulations objF2=new Formulations("F2",maintable.getValueAt(maintable.getSelectedRow(),1).toString(), maintable.getValueAt(maintable.getSelectedRow(),7).toString(), (int)(maintable.getValueAt(maintable.getSelectedRow(),0)));
+						  }
+				    	  else
+				    	  {
+				    		  JOptionPane.showMessageDialog(frmBeastview, "Kindly Select One Row...", "INFO",JOptionPane.INFORMATION_MESSAGE);
+				    	  }
 			          }
 			    	  if ( e.getKeyCode() == 114) 
 					  {
+			    		  if (maintable.getSelectedRowCount() == 1)
+				    	  {
 			    		  //F3
 			    		  Formulations objF3=new Formulations("F3",maintable.getValueAt(maintable.getSelectedRow(),1).toString(), maintable.getValueAt(maintable.getSelectedRow(),7).toString(), (int)(maintable.getValueAt(maintable.getSelectedRow(),0)));
-			          }
+				    	  }
+				    	  else
+				    	  {
+				    		  JOptionPane.showMessageDialog(frmBeastview, "Kindly Select One Row...", "INFO",JOptionPane.INFORMATION_MESSAGE);
+				    	  }
+					  }
 			    	  if ( e.getKeyCode() == 115) 
 					  {
+			    		  if (maintable.getSelectedRowCount() == 1)
+				    	  {
 			    		  //F4
 			    		  Formulations objF4=new Formulations("F4",maintable.getValueAt(maintable.getSelectedRow(),1).toString(), maintable.getValueAt(maintable.getSelectedRow(),7).toString(), (int)(maintable.getValueAt(maintable.getSelectedRow(),0)));
-			          }
+						  }
+				    	  else
+				    	  {
+				    		  JOptionPane.showMessageDialog(frmBeastview, "Kindly Select One Row...", "INFO",JOptionPane.INFORMATION_MESSAGE);
+				    	  }
+					  }
 			    	  if ( e.getKeyCode() == 116) 
 					  {
+			    		  if (maintable.getSelectedRowCount() == 1)
+				    	  {
 			    		  //F5
 			    		  Formulations objF5=new Formulations("F5",maintable.getValueAt(maintable.getSelectedRow(),1).toString(), maintable.getValueAt(maintable.getSelectedRow(),7).toString(), (int)(maintable.getValueAt(maintable.getSelectedRow(),0)));
+				    	  }
+				    	  else
+				    	  {
+				    		  JOptionPane.showMessageDialog(frmBeastview, "Kindly Select One Row...", "INFO",JOptionPane.INFORMATION_MESSAGE);
+				    	  }
+				      }
+			    	  if (e.isControlDown() && e.getKeyCode() == 68) 
+					  {
+			    		  //CTRL+ C
+			    		  if (maintable.getSelectedRowCount() == 1)
+				    	  {
+				    		  int opcion = JOptionPane.showConfirmDialog(null, "Are you sure, Want to Delete Head ?\n It will get deleted from dashboard, head and formula.", "Delete Head", JOptionPane.YES_NO_OPTION);
+							  if (opcion == 0) {
+					    		  String stmts[] = new String[3];
+					    		  stmts[0] = "DELETE FROM TBL_TRADE_LINE WHERE ID="+(int)(maintable.getValueAt(maintable.getSelectedRow(),0))+";"; 
+					    		  stmts[1] = "DELETE FROM TBL_BEAST_VIEW WHERE ID="+(int)(maintable.getValueAt(maintable.getSelectedRow(),0))+";"; 
+					    		  stmts[2] = "DELETE FROM TBL_FORMULA_DATA WHERE ID="+(int)(maintable.getValueAt(maintable.getSelectedRow(),0))+";"; 
+					    		  dbobj.executeBatchStatement(h2con, stmts);
+					    		  JOptionPane.showMessageDialog(frmBeastview, "Deleted Sucessfully !!", "INFO",JOptionPane.INFORMATION_MESSAGE);
+							  }
+				    	  }
+			    		  else
+				    	  {
+				    		  JOptionPane.showMessageDialog(frmBeastview, "Kindly Select One Row...", "INFO",JOptionPane.INFORMATION_MESSAGE);
+				    	  }
 			          }
 		    	 
 		      }
@@ -474,6 +634,11 @@ public class BeastView implements KeyListener{
 		  {
   		  //CTRL+ H
   		  ScriptSearch search = new ScriptSearch(objpresto);
+        }
+		if (e.isControlDown() && e.getKeyCode() == 72) 
+		{
+  		  //CTRL+ H
+				Crawler headadd=new Crawler("add", "head", 0);
         }
 		
 	}

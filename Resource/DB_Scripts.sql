@@ -22,5 +22,5 @@ F4POINT varchar(50) ,  F5POINT varchar(50) );
 
 'FORMULA DATA'
 
-CREATE TABLE TBL_FORMULA_DATA (ID bigint, X double, Y double, ST varchar(25), MT varchar(25),
+CREATE TABLE TBL_FORMULA_DATA (ID bigint,Fname varchar(10), X double, Y double, ST varchar(25), MT varchar(25),
 ET varchar(25), LCOUNT int, ROUND int, QTY int, TRADESWITCH Bool )

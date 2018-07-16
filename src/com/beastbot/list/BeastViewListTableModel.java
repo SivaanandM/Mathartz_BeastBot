@@ -48,4 +48,8 @@ public class BeastViewListTableModel extends AbstractTableModel
 		      default: return null;
 		    }
 	  }
+	  @Override
+	  public void fireTableDataChanged() {
+	        super.fireTableDataChanged();
+	    }
 }

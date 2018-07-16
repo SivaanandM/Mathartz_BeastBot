@@ -15,6 +15,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -54,6 +55,7 @@ public class ScriptSearch {
 	presto_commons objpresto;
 	TableModel model;
 	DbFuncs objdb;
+	Connection h2con=null;
 	private static int HEADER_HEIGHT = 25;
 	String col[]= {"SEC-ID","SYMBOL","EXCHANGE","INSTRUMENTS","LOT-SIZE","TICK-SIZE","EXPIRY-DD","EXPIRY-MMMYY","OPT-TYPE","STRIKE"};
 
@@ -79,6 +81,7 @@ public class ScriptSearch {
 	public ScriptSearch(presto_commons obj) 
 	{
 		objdb = new DbFuncs();
+		h2con=objdb.CheckandConnectDB(h2con);
 		if (obj == null)
 		{
 			objpresto = new presto_commons();
@@ -232,8 +235,8 @@ public class ScriptSearch {
 					String [] batchstmt = new String[records.size()];
 					if ((records != null) && (records.size() > 0))
 					{
-						objdb.executeNonQuery(null, "DELETE FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+textSymbol.getText()+"' and INSTRUMENT='FUTIDX';");
-						objdb.executeNonQuery(null, "DELETE FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+textSymbol.getText()+"' and EXPMONTHYEAR='"+txtExpmm.getText()+txtExpyyyy.getText()+"';");
+						objdb.executeNonQuery(h2con, "DELETE FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+textSymbol.getText()+"' and INSTRUMENT='FUTIDX';");
+						objdb.executeNonQuery(h2con, "DELETE FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+textSymbol.getText()+"' and EXPMONTHYEAR='"+txtExpmm.getText()+txtExpyyyy.getText()+"';");
 						
 						String [][] values = new String[records.size()][10];
 						for(int i=0; i < records.size(); i++)
@@ -255,7 +258,7 @@ public class ScriptSearch {
 											+ ",'"+values[i][5]+"','"+values[i][6]+"','"+values[i][7]+"','"+values[i][8]+"','"+values[i][9]+"');";
 							
 						}
-						int insertcount = objdb.executeBatchStatement(null, batchstmt);
+						int insertcount = objdb.executeBatchStatement(h2con, batchstmt);
 						model = new DefaultTableModel(values, col);
 						table.setModel(model);	
 						JOptionPane.showMessageDialog(frmScriptSearch,

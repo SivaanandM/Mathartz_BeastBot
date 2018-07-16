@@ -3,12 +3,13 @@ package com.beastbot.list;
 public class FormulaData {
 
 	int id;  
-	String st,mt,et;  
+	String fname, st,mt,et;  
 	double x,y;
 	int lcount,round,qty;  
 	Boolean tradeswitch;
-	public FormulaData(int id, double x, double y, String st,String mt,String et, int lcount,int round, int qty, Boolean tradeswitch) {  
-	    this.id = id;  
+	public FormulaData(int id, String fname, double x, double y, String st,String mt,String et, int lcount,int round, int qty, Boolean tradeswitch) {  
+	    this.id = id;
+	    this.fname = fname;
 	    this.x = x;  
 	    this.y = y;   
 	    this.st = st;  
@@ -22,6 +23,9 @@ public class FormulaData {
 	}
 	public int getId() {
         return id;
+    }
+	public String getfname() {
+        return fname;
     }
     public double getX() {
         return x;

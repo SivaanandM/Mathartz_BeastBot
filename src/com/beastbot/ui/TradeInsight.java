@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.sql.Connection;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -15,6 +16,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
+
+import com.beastbot.common.DbFuncs;
+
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.JLabel;
@@ -28,6 +32,8 @@ public class TradeInsight {
 	String headname, playername, fname;
 	int identity;
 	private static int HEADER_HEIGHT = 25;
+	DbFuncs dbobj;
+	Connection h2con=null;
 	/**
 	 * Launch the application.
 	 */

@@ -150,7 +150,7 @@ public class DbFuncs {
 	         stmt.execute(Querystr);
 	         ResultSet rs =stmt.getResultSet(); 
 	         while (rs.next()) {
-	        	 FormulaData record = new FormulaData(rs.getInt("id"),rs.getDouble("X"),rs.getDouble("Y"),rs.getString("st"),rs.getString("mt"),rs.getString("et"),rs.getInt("lcount"),rs.getInt("round"),rs.getInt("qty"),rs.getBoolean("tradeswitch"));
+	        	 FormulaData record = new FormulaData(rs.getInt("id"), rs.getString("fname"),rs.getDouble("X"),rs.getDouble("Y"),rs.getString("st"),rs.getString("mt"),rs.getString("et"),rs.getInt("lcount"),rs.getInt("round"),rs.getInt("qty"),rs.getBoolean("tradeswitch"));
 	             set.add(record);
 	         }
 	         
@@ -176,9 +176,9 @@ public class DbFuncs {
 		return set;
 	}
 	
-	public String [] loadCentralizedDate()
+	public String [] loadCentralizedDate(Connection conlink)
 	{
-		return getSingleCell(null, "SELECT DATE FROM TBL_CENTRAL_DATE WHERE ID = 1;").split("-");
+		return getSingleCell(conlink, "SELECT DATE FROM TBL_CENTRAL_DATE WHERE ID = 1;").split("-");
 		
 	}
 	
@@ -423,7 +423,7 @@ public class DbFuncs {
             		stmt.addBatch(statements[i]);
             }          
             int[] countWithoutException = stmt.executeBatch();
-            System.out.println("Inserted = " + countWithoutException.length);
+            System.out.println("executed = " + countWithoutException.length);
             conn.commit();
             stmtscount = countWithoutException.length;
         } catch (BatchUpdateException e) {

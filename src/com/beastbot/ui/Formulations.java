@@ -6,16 +6,29 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.sql.Connection;
+import java.util.List;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.SwingConstants;
+
+import org.h2.engine.DbObject;
+
+import com.beastbot.common.DbFuncs;
+import com.beastbot.list.FormulaData;
+
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JSlider;
 import javax.swing.JCheckBox;
 import javax.swing.JSeparator;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 
 public class Formulations {
@@ -35,6 +48,10 @@ public class Formulations {
 	JButton btnsave;
 	String Fname , HeadName, Playername;
 	int Identity;
+	DbFuncs objdb;
+	Connection h2con=null;
+	JCheckBox chckbxTradeSwitch;
+	JLabel lbloff,lblon;
 	
 
 	/**
@@ -61,9 +78,39 @@ public class Formulations {
 		HeadName = Headdisplay;
 		Playername = PLayerdisplay;
 		Identity = id;
-				
-		
+		objdb = new DbFuncs();
+		h2con = objdb.CheckandConnectDB(h2con);
 		initialize();
+		
+		//Load Existing Data
+		List<FormulaData> fd = objdb.getFormulaData(h2con, "SELECT * FROM TBL_FORMULA_DATA WHERE FNAME='"+Fname+"' and ID="+Identity+";");
+		if (fd.size() > 0)
+		{
+			txtx.setText(String.valueOf(fd.get(0).getX()));
+			txty.setText(String.valueOf(fd.get(0).getY()));
+			txtsthh.setText(String.valueOf(fd.get(0).getST().split(":")[0]));
+			txtstmm.setText(String.valueOf(fd.get(0).getST().split(":")[1]));
+			txtmthh.setText(String.valueOf(fd.get(0).getMT().split(":")[0]));
+			txtmtmm.setText(String.valueOf(fd.get(0).getMT().split(":")[1]));
+			txtethh.setText(String.valueOf(fd.get(0).getET().split(":")[0]));
+			txtetmm.setText(String.valueOf(fd.get(0).getET().split(":")[1]));
+			txtlcount.setText(String.valueOf(fd.get(0).getLcount()));
+			txtround.setText(String.valueOf(fd.get(0).getRound()));
+			txtqty.setText(String.valueOf(fd.get(0).getQty()));
+			chckbxTradeSwitch.setSelected(Boolean.parseBoolean(String.valueOf(fd.get(0).getTradeswitch())));
+			
+			if (chckbxTradeSwitch.isSelected())
+	        {
+	        	lblon.setVisible(true);
+	        	lbloff.setVisible(false);
+	        }
+	        else
+	        {
+	        	lblon.setVisible(false);
+	        	lbloff.setVisible(true);
+	        }
+			
+		}
 	}
 
 	/**
@@ -81,6 +128,7 @@ public class Formulations {
 		frmformula.getContentPane().setLayout(null);
 		frmformula.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frmformula.setResizable(false);
+		frmformula.setVisible(true);
 		
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
@@ -107,7 +155,7 @@ public class Formulations {
 		lblSt.setHorizontalAlignment(SwingConstants.LEFT);
 		lblSt.setForeground(Color.WHITE);
 		lblSt.setFont(new Font("Verdana", Font.PLAIN, 18));
-		lblSt.setBounds(104, 109, 81, 49);
+		lblSt.setBounds(104, 109, 39, 49);
 		panel.add(lblSt);
 		
 		JLabel lblMt = new JLabel("MT");
@@ -277,6 +325,28 @@ public class Formulations {
 		panel.add(label_18);
 		
 		btnsave = new JButton("SAVE");
+		btnsave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				if (objdb.getRowCount(h2con, "SELECT * FROM TBL_FORMULA_DATA WHERE FNAME='"+Fname+"' and ID="+Identity+";") == 0)
+				{
+					String insert = "INSERT INTO TBL_FORMULA_DATA (ID,FNAME,X,Y,ST,MT,ET,LCOUNT,ROUND,QTY,TRADESWITCH) VALUES"
+							+ " ("+Identity+",'"+Fname+"',"+txtx.getText()+","+txty.getText()+",'"+txtsthh.getText()+":"+txtstmm.getText()+"'"
+									+ ", '"+txtmthh.getText()+":"+txtmtmm.getText()+"','"+txtethh.getText()+":"+txtetmm.getText()+"',"+txtlcount.getText()+","
+											+ txtround.getText() +","+txtqty.getText()+","+chckbxTradeSwitch.isSelected()+");";
+					objdb.executeNonQuery(h2con, insert);
+				}
+				else
+				{
+					String update ="UPDATE TBL_FORMULA_DATA SET X="+txtx.getText()+", Y="+txty.getText()+",ST='"+txtsthh.getText()+":"+txtstmm.getText()+"',"
+							+ " MT='"+txtmthh.getText()+":"+txtmtmm.getText()+"', ET='"+txtethh.getText()+":"+txtetmm.getText()+"',"
+									+ "LCOUNT="+txtlcount.getText()+", ROUND="+txtround.getText()+", QTY="+txtqty.getText()+", TRADESWITCH="+chckbxTradeSwitch.isSelected()+" "
+											+ " WHERE FNAME='"+Fname+"' and ID="+Identity+";";
+					objdb.executeNonQuery(h2con, update);
+				}
+				JOptionPane.showMessageDialog(frmformula, "Formula Saved Sucessfully ", "INFO",JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
 		btnsave.setBounds(10, 484, 256, 45);
 		panel.add(btnsave);
 		
@@ -299,7 +369,7 @@ public class Formulations {
 		lblTradeSwitch.setBounds(37, 11, 90, 28);
 		panel_1.add(lblTradeSwitch);
 		
-		JLabel lbloff = new JLabel("OFF");
+		lbloff = new JLabel("OFF");
 		lbloff.setHorizontalAlignment(SwingConstants.CENTER);
 		lbloff.setForeground(Color.GREEN);
 		lbloff.setFont(new Font("Verdana", Font.PLAIN, 18));
@@ -307,14 +377,14 @@ public class Formulations {
 		lbloff.setVisible(true);
 		panel_1.add(lbloff);
 		
-		JCheckBox chckbxTradeSwitch = new JCheckBox("");
+		chckbxTradeSwitch = new JCheckBox("");
 		chckbxTradeSwitch.setBackground(new Color(51,51,51));
 		chckbxTradeSwitch.setForeground(new Color(255, 220, 135));
 		chckbxTradeSwitch.setFont(new Font("Verdana", Font.PLAIN, 22));
 		chckbxTradeSwitch.setBounds(133, 11, 21, 32);
 		panel_1.add(chckbxTradeSwitch);
 		
-		JLabel lblon = new JLabel("ON");
+		lblon = new JLabel("ON");
 		lblon.setBounds(160, 10, 60, 32);
 		panel_1.add(lblon);
 		lblon.setHorizontalAlignment(SwingConstants.CENTER);

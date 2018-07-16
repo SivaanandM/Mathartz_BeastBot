@@ -15,9 +15,7 @@ public class Scriptsdetail
 	    this.expmonthyear = expmonthyear;  
 	    this.opttype = opttype;  
 	    this.strike = strike;  
-  
 	}  
-	
 	public String getSecid()
 	{
 		return secid;
