@@ -8,9 +8,9 @@ public class BeastViewList
 {
   int id;
   String headdisplay, playerdisplay;
-  String F1Point, F2Point, F3Point, F4Point, F5Point;
+  double F1Point, F2Point, F3Point, F4Point, F5Point;
   
-  public BeastViewList(int id, String headdisplay, String F1Point, String F2Point, String F3Point, String F4Point, String F5Point, String playerdisplay)
+  public BeastViewList(int id, String headdisplay, double F1Point, double F2Point, double F3Point, double F4Point,double F5Point, String playerdisplay)
   {
 	  this.id = id;
 	  this.headdisplay = headdisplay;
@@ -29,23 +29,23 @@ public class BeastViewList
   {
 		return headdisplay;
   }
-  public String getF1Point()
+  public double getF1Point()
   {
 		return F1Point;
   }
-  public String getF2Point()
+  public double getF2Point()
   {
 		return F2Point;
   }
-  public String getF3Point()
+  public double getF3Point()
   {
 		return F3Point;
   }
-  public String getF4Point()
+  public double getF4Point()
   {
 		return F4Point;
   }
-  public String getF5Point()
+  public double getF5Point()
   {
 		return F5Point;
   }
@@ -55,11 +55,8 @@ public class BeastViewList
   }
   public String[] getData()
   {
-    return new String[]{String.valueOf(id),headdisplay,F1Point,F2Point, F3Point, F4Point, F5Point, playerdisplay};
+    return new String[]{String.valueOf(id),headdisplay,String.valueOf(F1Point),String.valueOf(F2Point), String.valueOf(F3Point),String.valueOf(F4Point),String.valueOf(F5Point), playerdisplay};
   }
-  public Object getposition() {
-	// TODO Auto-generated method stub
-	return new String[]{String.valueOf(id),headdisplay,F1Point,F2Point, F3Point, F4Point, F5Point, playerdisplay};
-  }
+  
   
 }

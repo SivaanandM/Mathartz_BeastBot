@@ -43,10 +43,12 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
+import com.beastbot.common.CommonObjects;
 import com.beastbot.common.DbFuncs;
 import com.beastbot.list.BeastViewList;
 import com.beastbot.list.BeastViewListTableModel;
 import com.beastbot.presto.presto_commons;
+import com.beastbot.presto.engine.FeedAPITesterWithQueue;
 
 
 
@@ -108,6 +110,29 @@ public class BeastView implements KeyListener{
 		initialize();
 	}
 
+	public void Alligntable()
+	{
+
+        columnModel = maintable.getColumnModel();
+		columnModel.getColumn(0).setPreferredWidth(5);
+		columnModel.getColumn(1).setPreferredWidth(200);
+		columnModel.getColumn(2).setPreferredWidth(100);
+		columnModel.getColumn(3).setPreferredWidth(100);
+		columnModel.getColumn(4).setPreferredWidth(100);
+		columnModel.getColumn(5).setPreferredWidth(100);
+		columnModel.getColumn(6).setPreferredWidth(100);
+		columnModel.getColumn(7).setPreferredWidth(200);
+		maintable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		
+		renderer = new DefaultTableCellRenderer();
+	    renderer.setHorizontalAlignment(JLabel.CENTER);
+	    columnModel.getColumn(0).setCellRenderer(renderer);
+	    columnModel.getColumn(2).setCellRenderer(renderer);
+	    columnModel.getColumn(3).setCellRenderer(renderer);
+	    columnModel.getColumn(4).setCellRenderer(renderer);
+	    columnModel.getColumn(5).setCellRenderer(renderer);
+	    columnModel.getColumn(6).setCellRenderer(renderer);
+	}
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -182,7 +207,16 @@ public class BeastView implements KeyListener{
 		
 		btnrun = new JButton("RUN");
 		btnrun.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				isRunning=true;
+				CommonObjects.GlobalBeastViewList = ViewList;
+				CommonObjects.GloblaFormulaList =  dbobj.getFormulaData(h2con, "SELECT * FROM TBL_FORMULA_DATA;");
+				CommonObjects.GlobalSquadScript = dbobj.getSquadScriptData(h2con, "SELECT * FROM TBL_TRADE_LINE;");
+				CommonObjects.uniqueheadid = dbobj.getMultiColumnRecords(h2con, "SELECT DISTINCT(HEADID), HEADSYMBOL FROM TBL_TRADE_LINE;");
+				
+				FeedAPITesterWithQueue objfeeder =new FeedAPITesterWithQueue();
+				objfeeder.startfeed();
 			}
 		});
 		btnrun.setPreferredSize(new Dimension(150, 35));
@@ -194,6 +228,11 @@ public class BeastView implements KeyListener{
 		btnclear.setPreferredSize(new Dimension(150, 35));
 		
 		btnstop = new JButton("STOP");
+		btnstop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isRunning=false;
+			}
+		});
 		btnstop.setPreferredSize(new Dimension(150, 35));
 		GroupLayout gl_pnldowncenter = new GroupLayout(pnldowncenter);
 		gl_pnldowncenter.setHorizontalGroup(
@@ -244,20 +283,20 @@ public class BeastView implements KeyListener{
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(txtmmm, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(txtyy, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btndatefix, GroupLayout.DEFAULT_SIZE, 56, Short.MAX_VALUE)
+					.addComponent(txtyy, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(btndatefix)
 					.addContainerGap())
 		);
 		gl_pnldown.setVerticalGroup(
 			gl_pnldown.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_pnldown.createSequentialGroup()
+				.addGroup(Alignment.TRAILING, gl_pnldown.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_pnldown.createParallelGroup(Alignment.LEADING)
-						.addComponent(btndatefix, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
-						.addComponent(txtyy, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
-						.addComponent(txtmmm, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
-						.addComponent(txtdd, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE))
+					.addGroup(gl_pnldown.createParallelGroup(Alignment.TRAILING)
+						.addComponent(txtyy, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+						.addComponent(btndatefix, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+						.addComponent(txtmmm, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+						.addComponent(txtdd, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		pnldownleft.setLayout(gl_pnldown);
@@ -312,25 +351,7 @@ public class BeastView implements KeyListener{
 		maintable.setRowHeight(25);
 		maintable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		maintable.setRowSelectionAllowed(true);
-		columnModel = maintable.getColumnModel();
-		columnModel.getColumn(0).setPreferredWidth(5);
-		columnModel.getColumn(1).setPreferredWidth(200);
-		columnModel.getColumn(2).setPreferredWidth(100);
-		columnModel.getColumn(3).setPreferredWidth(100);
-		columnModel.getColumn(4).setPreferredWidth(100);
-		columnModel.getColumn(5).setPreferredWidth(100);
-		columnModel.getColumn(6).setPreferredWidth(100);
-		columnModel.getColumn(7).setPreferredWidth(200);
-		maintable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-		
-		renderer = new DefaultTableCellRenderer();
-	    renderer.setHorizontalAlignment(JLabel.CENTER);
-	    columnModel.getColumn(0).setCellRenderer(renderer);
-	    columnModel.getColumn(2).setCellRenderer(renderer);
-	    columnModel.getColumn(3).setCellRenderer(renderer);
-	    columnModel.getColumn(4).setCellRenderer(renderer);
-	    columnModel.getColumn(5).setCellRenderer(renderer);
-	    columnModel.getColumn(6).setCellRenderer(renderer);
+		Alligntable();
 		
 		JTableHeader header = maintable.getTableHeader();
 		header.setForeground(new Color(255, 220, 135));
@@ -376,28 +397,15 @@ public class BeastView implements KeyListener{
             		            if (isRunning == false)
             		            {
             		            	ViewList = dbobj.getBeastViewData(h2con, "SELECT * FROM TBL_BEAST_VIEW ORDER BY ID;");
+            		            	mainmodel =new  BeastViewListTableModel(ViewList);
             		            }
-            		            mainmodel =new  BeastViewListTableModel(ViewList);
+            		            else
+            		            {
+            		            	mainmodel = new  BeastViewListTableModel(CommonObjects.GlobalBeastViewList);
+            		            }
             		            maintable.setModel(mainmodel);
             		            columnModel = maintable.getColumnModel();
-            		    		columnModel.getColumn(0).setPreferredWidth(5);
-            		    		columnModel.getColumn(1).setPreferredWidth(200);
-            		    		columnModel.getColumn(2).setPreferredWidth(100);
-            		    		columnModel.getColumn(3).setPreferredWidth(100);
-            		    		columnModel.getColumn(4).setPreferredWidth(100);
-            		    		columnModel.getColumn(5).setPreferredWidth(100);
-            		    		columnModel.getColumn(6).setPreferredWidth(100);
-            		    		columnModel.getColumn(7).setPreferredWidth(200);
-            		    		maintable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-            		    		
-            		    		renderer = new DefaultTableCellRenderer();
-            		    	    renderer.setHorizontalAlignment(JLabel.CENTER);
-            		    	    columnModel.getColumn(0).setCellRenderer(renderer);
-            		    	    columnModel.getColumn(2).setCellRenderer(renderer);
-            		    	    columnModel.getColumn(3).setCellRenderer(renderer);
-            		    	    columnModel.getColumn(4).setCellRenderer(renderer);
-            		    	    columnModel.getColumn(5).setCellRenderer(renderer);
-            		    	    columnModel.getColumn(6).setCellRenderer(renderer);
+            		            Alligntable();
             		     		
             		     		
             		            if (selectedrow != -1)

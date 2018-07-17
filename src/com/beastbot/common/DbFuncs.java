@@ -20,6 +20,7 @@ import org.pmw.tinylog.writers.FileWriter;
 import com.beastbot.list.BeastViewList;
 import com.beastbot.list.FormulaData;
 import com.beastbot.list.Scriptsdetail;
+import com.beastbot.list.SquadScripts;
 
 import org.h2.jdbcx.JdbcDataSource;
 
@@ -114,7 +115,7 @@ public class DbFuncs {
 	         stmt.execute(Querystr);
 	         ResultSet rs =stmt.getResultSet(); 
 	         while (rs.next()) {
-	        	 BeastViewList record = new BeastViewList(rs.getInt("id"),rs.getString("headdisplay"),rs.getString("F1Point"),rs.getString("F2Point"),rs.getString("F3Point"),rs.getString("F4Point"),rs.getString("F5Point"),rs.getString("playerdisplay"));
+	        	 BeastViewList record = new BeastViewList(rs.getInt("id"),rs.getString("headdisplay"),rs.getDouble("F1Point"),rs.getDouble("F2Point"),rs.getDouble("F3Point"),rs.getDouble("F4Point"),rs.getDouble("F5Point"),rs.getString("playerdisplay"));
 	             set.add(record);
 	         }
 	         
@@ -139,7 +140,41 @@ public class DbFuncs {
 		}
 		return set;
 	}
-	
+	public List<SquadScripts> getSquadScriptData(Connection conn, String Querystr)
+	{
+		List<SquadScripts> set=new ArrayList<SquadScripts>(); 
+		try {
+			 conn = CheckandConnectDB(conn);
+	         stmt = conn.createStatement();
+	         stmt.execute(Querystr);
+	         ResultSet rs =stmt.getResultSet(); 
+	         while (rs.next()) {
+	        	 SquadScripts record = new SquadScripts(rs.getInt("id"),rs.getString("headid"),rs.getString("headdisplay"),rs.getString("headsymbol"),rs.getString("playerdisplay"),rs.getString("playerid"),rs.getString("symbol"),rs.getString("exchange"),rs.getString("instrument")
+	        			 ,rs.getString("lotsize"),rs.getString("ticksize"),rs.getString("expdd"),rs.getString("expmonthyear"),rs.getString("opttype"),rs.getString("strike"));
+	             set.add(record);
+	         }
+	         
+	         if (rs != null) {
+	                rs.close();
+	            }
+	        
+		}
+		catch(Exception ex){
+			System.out.println(ex.getMessage() +"QUERY :"+Querystr);
+			Logger.error(ex);
+		}
+		finally {
+			try {
+	            
+	            if (stmt != null) {
+	                stmt.close();
+	            }
+	        } catch (SQLException e) {
+	            Logger.error("Ignored", e);
+	        }	
+		}
+		return set;
+	}
 	public List<FormulaData> getFormulaData(Connection conn,String Querystr)
 	{
 		
