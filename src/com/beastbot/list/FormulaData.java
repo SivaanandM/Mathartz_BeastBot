@@ -1,5 +1,7 @@
 package com.beastbot.list;
 
+import java.util.List;
+
 public class FormulaData {
 
 	int id;  
@@ -21,6 +23,7 @@ public class FormulaData {
 	    this.tradeswitch=tradeswitch;
 	    
 	}
+	
 	public int getId() {
         return id;
     }

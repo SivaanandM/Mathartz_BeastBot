@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TimeZone;
 
+import com.beastbot.common.CommonObjects;
+import com.beastbot.formula.FormulaAmaze;
 import com.sft.feedprovider.MarketDataProvider;
 
 
@@ -16,6 +18,7 @@ import com.sft.feedprovider.MarketDataProvider;
 public class FeedConsumer extends Thread{
 
 	private FeedBlockingQueue feedBlockingQueue = null;
+	FormulaAmaze objFamaze;
 	Calendar c = Calendar.getInstance();
 	Date date = new Date("12/31/1979 23:59:59");
 	SimpleDateFormat monthyearDayCon = new SimpleDateFormat(
@@ -24,6 +27,7 @@ public class FeedConsumer extends Thread{
 	public FeedConsumer() {
 		// TODO Auto-generated constructor stub
 		TimeZone istTime = TimeZone.getTimeZone("IST");
+		objFamaze = new FormulaAmaze();
 		monthyearDayCon.setTimeZone(istTime);
 		c.setTime(date);
 	}
@@ -35,28 +39,25 @@ public class FeedConsumer extends Thread{
 		{
 			Map<String, MarketDataProvider> symbolMap = feedBlockingQueue.take();
 			Collection<MarketDataProvider> s = symbolMap.values();
-			String [] secids=new String[2];	
-			secids[0]="2885";
-			secids[1]="45127";
+			
 			for (MarketDataProvider mdp : s) {	
-				for (int i=0 ; i<2;i++)
+				for (int i=0 ; i<CommonObjects.Globaluniqueheadid.length;i++)
 				{
-					if(symbolMap.containsKey(secids[i]))
+					if(symbolMap.containsKey(CommonObjects.Globaluniqueheadid[i][0]))
 					{
-						System.out.println(secids[i] +" CALLED : ");
-						System.out.println("------LTP: " + ((int) mdp.getLastTradePrice(secids[i]) / 100));
-						long time = mdp.getLastTradeTime(secids[i]);
-						Date date1 = new Date((time * 1000) + c.getTimeInMillis());
-						System.out.println("------LTT: date: " + monthyearDayCon.format(date1));
+						String[] fids;
+						for (int k=0 ; k < CommonObjects.Globaltradlinemap.length; k++)
+						{
+							if ( CommonObjects.Globaltradlinemap[k][0].equals(CommonObjects.Globaluniqueheadid[i][0]))
+							{
+								fids = CommonObjects.Globaltradlinemap[k][1].split(":");
+								objFamaze.FormulaAmazeDriver(fids, mdp.getLastTradePrice(CommonObjects.Globaluniqueheadid[i][0]), mdp.getLastTradeTime(CommonObjects.Globaluniqueheadid[i][0]));
+								break;
+							}
+						}
 					}
 				}
 			}
 		}
-	}
-	public void callReliance(){
-		System.out.println("Reliance Called");
-	}
-	public void callNifty(){
-		System.out.println("NIFTY Called");
 	}
 }

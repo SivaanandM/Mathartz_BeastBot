@@ -45,6 +45,7 @@ import javax.swing.table.TableModel;
 
 import com.beastbot.common.CommonObjects;
 import com.beastbot.common.DbFuncs;
+import com.beastbot.list.Amazevalues;
 import com.beastbot.list.BeastViewList;
 import com.beastbot.list.BeastViewListTableModel;
 import com.beastbot.presto.presto_commons;
@@ -77,7 +78,7 @@ public class BeastView implements KeyListener{
     presto_commons objpresto;
     TableColumnModel columnModel;
     DefaultTableCellRenderer renderer;
-    Boolean isRunning = false;
+    
     Connection h2con=null;
     
 
@@ -209,14 +210,17 @@ public class BeastView implements KeyListener{
 		btnrun.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) 
 			{
-				isRunning=true;
+				CommonObjects.isRunning=true;
 				CommonObjects.GlobalBeastViewList = ViewList;
-				CommonObjects.GloblaFormulaList =  dbobj.getFormulaData(h2con, "SELECT * FROM TBL_FORMULA_DATA;");
+				CommonObjects.GlobalAmazeFormulaList =  dbobj.getFormulaData(h2con, "SELECT * FROM TBL_FORMULA_DATA WHERE FNAME='F1';");
 				CommonObjects.GlobalSquadScript = dbobj.getSquadScriptData(h2con, "SELECT * FROM TBL_TRADE_LINE;");
-				CommonObjects.uniqueheadid = dbobj.getMultiColumnRecords(h2con, "SELECT DISTINCT(HEADID), HEADSYMBOL FROM TBL_TRADE_LINE;");
-				
+				CommonObjects.Globaluniqueheadid = dbobj.getMultiColumnRecords(h2con, "SELECT DISTINCT(HEADID), HEADSYMBOL FROM TBL_TRADE_LINE;");
+				CommonObjects.Globaltradlinemap = dbobj.getuniquetransposeId(h2con);
+				CommonObjects.GlobalAmazeValues = dbobj.getInitialAmazevalues(h2con);
 				FeedAPITesterWithQueue objfeeder =new FeedAPITesterWithQueue();
-				objfeeder.startfeed();
+				 new Thread(() -> {
+					 objfeeder.startfeed();
+				 }).start();			
 			}
 		});
 		btnrun.setPreferredSize(new Dimension(150, 35));
@@ -230,7 +234,7 @@ public class BeastView implements KeyListener{
 		btnstop = new JButton("STOP");
 		btnstop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				isRunning=false;
+				CommonObjects.isRunning=false;
 			}
 		});
 		btnstop.setPreferredSize(new Dimension(150, 35));
@@ -394,7 +398,7 @@ public class BeastView implements KeyListener{
             		            		selectedrow = maintable.getSelectedRow();
             		            }
             		            // Need to Right logic for refresh maintable
-            		            if (isRunning == false)
+            		            if (CommonObjects.isRunning == false)
             		            {
             		            	ViewList = dbobj.getBeastViewData(h2con, "SELECT * FROM TBL_BEAST_VIEW ORDER BY ID;");
             		            	mainmodel =new  BeastViewListTableModel(ViewList);

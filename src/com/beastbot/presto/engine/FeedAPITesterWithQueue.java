@@ -11,7 +11,7 @@ public class FeedAPITesterWithQueue implements FeedService {
 	Executor executor;
 	static FeedConsumer feedconsumer=null;
 	int feedno =0;
-	public static void startfeed()
+	public void startfeed()
 	{
 		try 
 		{
@@ -44,9 +44,9 @@ public class FeedAPITesterWithQueue implements FeedService {
 		executor = new Executor();
 		executor.start(this);
 		
-		if (CommonObjects.uniqueheadid != null)
+		if (CommonObjects.Globaluniqueheadid != null)
 		{
-			for (String[] headid : CommonObjects.uniqueheadid) 
+			for (String[] headid : CommonObjects.Globaluniqueheadid) 
 			{
 				executor.subscribe(headid[0], headid[1]);
 			}

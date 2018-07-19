@@ -12,11 +12,13 @@ import com.beastbot.list.Tradeinfo;
 
 public class CommonObjects 
 {
-	public static List<FormulaData> GloblaFormulaList;
+	public static Boolean isRunning = false;
+	public static List<FormulaData> GlobalAmazeFormulaList;
 	public static List<BeastViewList> GlobalBeastViewList;
 	public static List<SquadScripts> GlobalSquadScript;
 	public static List<Amazevalues> GlobalAmazeValues;
 	public static List<Tradeinfo> GlobalTradeInfo;
-	public static String[][] uniqueheadid;
+	public static String[][] Globaluniqueheadid;
+	public static String[][] Globaltradlinemap;
 		
 }

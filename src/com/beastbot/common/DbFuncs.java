@@ -17,6 +17,7 @@ import java.util.Properties;
 import org.pmw.tinylog.*;
 import org.pmw.tinylog.writers.FileWriter;
 
+import com.beastbot.list.Amazevalues;
 import com.beastbot.list.BeastViewList;
 import com.beastbot.list.FormulaData;
 import com.beastbot.list.Scriptsdetail;
@@ -333,7 +334,83 @@ public class DbFuncs {
 		return data;
 	}
 	
+	public String[][] getuniquetransposeId(Connection conn)
+	{
+		String [][] hyperids = new String[CommonObjects.Globaluniqueheadid.length][2];
+		try
+		{
+			 conn = CheckandConnectDB(conn);
+	         
+	         for(int i=0; i<CommonObjects.Globaluniqueheadid.length; i++)
+	         {
+	        	 String ids = "";
+	        	 stmt = conn.createStatement();
+	        	 stmt.execute("SELECT ID FROM TBL_TRADE_LINE  WHERE HEADID='"+CommonObjects.Globaluniqueheadid[i][0]+"';");
+	        	 ResultSet rs =stmt.getResultSet(); 
+		         while (rs.next()) {
+		        	ids  = ids+":"+rs.getString(1);
+		         }
+		         hyperids[i][0] = CommonObjects.Globaluniqueheadid[i][0];
+		         hyperids[i][1] = ids.replaceFirst(":", "");
+		         if (rs != null) {
+		                rs.close();
+		            }
+	         }
+	         
+		}
+		catch(Exception ex)
+		{
+			System.out.println(ex.getMessage());
+			Logger.error(ex);
+		}
+		finally {
+			try {
+	            
+	            if (stmt != null) {
+	                stmt.close();
+	            }
+	        } catch (SQLException e) {
+	            Logger.error("Ignored", e);
+	        }	
+		}
+		return hyperids;
+	}
 	
+	public List<Amazevalues> getInitialAmazevalues(Connection con)
+	{
+		List<Amazevalues> avs=new ArrayList<Amazevalues>();
+		try {
+			 conn = CheckandConnectDB(conn);
+	         stmt = conn.createStatement();
+	         stmt.execute("SELECT * FROM TBL_TRADE_LINE;");
+	         ResultSet rs =stmt.getResultSet(); 
+	         while (rs.next()) {
+	        	 Amazevalues record = new Amazevalues(rs.getInt("ID"),rs.getString("HEADID"),
+	        			 rs.getString("PLAYERID"),0,0,0,0.0,0.0,0.0,0.0,0.0,"Sart");
+	        	 avs.add(record);
+	         }
+	         
+	         if (rs != null) {
+	                rs.close();
+	            }
+	        
+		}
+		catch(Exception ex){
+			System.out.println(ex.getMessage());
+			Logger.error(ex);
+		}
+		finally {
+			try {
+	            
+	            if (stmt != null) {
+	                stmt.close();
+	            }
+	        } catch (SQLException e) {
+	            Logger.error("Ignored", e);
+	        }	
+		}
+		return avs;
+	}
 	
 	public String[][] getMultiColumnRecords(Connection conn, String Querystr)
 	{

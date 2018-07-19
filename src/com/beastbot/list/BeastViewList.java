@@ -21,6 +21,7 @@ public class BeastViewList
 	  this.F5Point = F5Point;
 	  this.playerdisplay = playerdisplay;
   }
+ 
   public int getid()
   {
 		return id;
@@ -53,6 +54,39 @@ public class BeastViewList
   {
 		return playerdisplay;
   }
+//  
+//  public int setid(int id, List<BeastViewList>)
+//  {
+//		return id;
+//  }
+//  public String setHeadDisplay()
+//  {
+//		return headdisplay;
+//  }
+//  public double setF1Point()
+//  {
+//		return F1Point;
+//  }
+//  public double setF2Point()
+//  {
+//		return F2Point;
+//  }
+//  public double setF3Point()
+//  {
+//		return F3Point;
+//  }
+//  public double setF4Point()
+//  {
+//		return F4Point;
+//  }
+//  public double setF5Point()
+//  {
+//		return F5Point;
+//  }
+//  public String setPlayerDisplay()
+//  {
+//		return playerdisplay;
+//  }
   public String[] getData()
   {
     return new String[]{String.valueOf(id),headdisplay,String.valueOf(F1Point),String.valueOf(F2Point), String.valueOf(F3Point),String.valueOf(F4Point),String.valueOf(F5Point), playerdisplay};
