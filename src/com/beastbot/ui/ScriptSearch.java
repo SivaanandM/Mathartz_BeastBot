@@ -28,6 +28,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 import com.beastbot.presto.*;
+import com.beastbot.common.CommonObjects;
 import com.beastbot.common.DbFuncs;
 import com.beastbot.list.*;
 
@@ -52,7 +53,7 @@ public class ScriptSearch {
 	private JTextField txtExpyyyy;
 	private JTable table;
 	private List<Scriptsdetail> records=null;
-	presto_commons objpresto;
+	//presto_commons objpresto;
 	TableModel model;
 	DbFuncs objdb;
 	Connection h2con=null;
@@ -84,12 +85,12 @@ public class ScriptSearch {
 		h2con=objdb.CheckandConnectDB(h2con);
 		if (obj == null)
 		{
-			objpresto = new presto_commons();
+			CommonObjects.objpresto = new presto_commons();
 		}
-		else
-		{
-			objpresto = obj;
-		}
+		//else
+		//{
+			CommonObjects.objpresto = obj;
+		//}
 		initialize();
 	}
 
@@ -231,7 +232,7 @@ public class ScriptSearch {
 			btnGetScriptList.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					
-					records = objpresto.getMatchedScripts(textSymbol.getText(), txtExpmm.getText()+txtExpyyyy.getText());
+					records = CommonObjects.objpresto.getMatchedScripts(textSymbol.getText(), txtExpmm.getText()+txtExpyyyy.getText());
 					String [] batchstmt = new String[records.size()];
 					if ((records != null) && (records.size() > 0))
 					{

@@ -40,4 +40,24 @@ public class Date {
 	return new Date(date.substring(6, 8), date.substring(4, 6), date
 	.substring(0, 4));
 	}
+	public static String getmonthvalue(String mmm)
+	{
+		String v="";
+		for (int i=1; i <= monthArr.length; i++) 
+		{
+			if (monthArr[i].equalsIgnoreCase(mmm))
+			{
+				if (i < 10)
+				{
+					return "0"+String.valueOf(i);
+				}
+				else
+				{
+					return String.valueOf(i);
+				}
+				
+			}
+		}
+		return v;
+	}
 }

@@ -402,6 +402,7 @@ public class Crawler {
 		{
 			int identity;
 			String strheaddisplay="";
+			
 			List<Scriptsdetail> headdata = null;
 			if (cmbinstrument.getSelectedItem()=="FUT")
 			{
@@ -409,6 +410,7 @@ public class Crawler {
 				headdata = dbobj.getContractdata(h2con, "SELECT * FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+ txtsymbol.getText()+"'"
 						+ " and INSTRUMENT='FUTIDX' and EXPMONTHYEAR='"+txtfutmmm.getText()+txtfutyy.getText()+"';");
 				strheaddisplay = headdata.get(0).getSymbol() +"-"+headdata.get(0).getExpmonthyear();
+				
 			}
 			else if (cmbinstrument.getSelectedItem()=="OPT")
 			{
@@ -416,10 +418,11 @@ public class Crawler {
 				headdata = dbobj.getContractdata(h2con, "SELECT * FROM TBL_MASTER_CONTRACTS WHERE SYMBOL='"+ txtsymbol.getText()+"'"
 						+ " and INSTRUMENT='OPTIDX' and STRIKE ='"+txtstrike.getText()+"' and OPTTYPE='"+cmbright.getSelectedItem()+"' and EXPDD='"+txtoptdd.getText()+"' and EXPMONTHYEAR='"+txtoptmm.getText()+txtoptyy.getText()+"';");
 				strheaddisplay =  headdata.get(0).getSymbol() +"-"+headdata.get(0).getExpdd()+headdata.get(0).getExpmonthyear()+"-"+headdata.get(0).getOpttype()+"-"+ headdata.get(0).getStrike();
+				
 			}
 			if ((headdata != null) && (headdata.size() > 0))
 			{
-				 dbobj.executeNonQuery(h2con, "UPDATE TBL_TRADE_LINE SET HEADDISPLAY='"+strheaddisplay+"', HEADSYMBOL='"+headdata.get(0).getSymbol()+"' WHERE ID ="+id+";");
+				 dbobj.executeNonQuery(h2con, "UPDATE TBL_TRADE_LINE SET HEADID='"+headdata.get(0).getSecid()+"', HEADDISPLAY='"+strheaddisplay+"', HEADSYMBOL='"+headdata.get(0).getSymbol()+"' WHERE ID ="+id+";");
 				 dbobj.executeNonQuery(h2con, "UPDATE TBL_BEAST_VIEW SET HEADDISPLAY='"+strheaddisplay+"' WHERE ID ="+id+";");
 				JOptionPane.showMessageDialog(frmcrawler,"Head updated to Trade Line Identity : "+String.valueOf(id), "INFO",JOptionPane.INFORMATION_MESSAGE);
 			}
@@ -440,6 +443,7 @@ public class Crawler {
 		{
 			
 			String strplayerdisplay="";
+			
 			List<Scriptsdetail> playerdata = null;
 			if (cmbinstrument.getSelectedItem()=="FUT")
 			{

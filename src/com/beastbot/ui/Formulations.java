@@ -330,10 +330,10 @@ public class Formulations {
 			{
 				if (objdb.getRowCount(h2con, "SELECT * FROM TBL_FORMULA_DATA WHERE FNAME='"+Fname+"' and ID="+Identity+";") == 0)
 				{
-					String insert = "INSERT INTO TBL_FORMULA_DATA (ID,FNAME,X,Y,ST,MT,ET,LCOUNT,ROUND,QTY,TRADESWITCH) VALUES"
+					String insert = "INSERT INTO TBL_FORMULA_DATA (ID,FNAME,X,Y,ST,MT,ET,LCOUNT,ROUND,QTY,TRADESWITCH, ISEND) VALUES"
 							+ " ("+Identity+",'"+Fname+"',"+txtx.getText()+","+txty.getText()+",'"+txtsthh.getText()+":"+txtstmm.getText()+"'"
 									+ ", '"+txtmthh.getText()+":"+txtmtmm.getText()+"','"+txtethh.getText()+":"+txtetmm.getText()+"',"+txtlcount.getText()+","
-											+ txtround.getText() +","+txtqty.getText()+","+chckbxTradeSwitch.isSelected()+");";
+											+ txtround.getText() +","+txtqty.getText()+","+chckbxTradeSwitch.isSelected()+",false);";
 					objdb.executeNonQuery(h2con, insert);
 				}
 				else
@@ -341,7 +341,7 @@ public class Formulations {
 					String update ="UPDATE TBL_FORMULA_DATA SET X="+txtx.getText()+", Y="+txty.getText()+",ST='"+txtsthh.getText()+":"+txtstmm.getText()+"',"
 							+ " MT='"+txtmthh.getText()+":"+txtmtmm.getText()+"', ET='"+txtethh.getText()+":"+txtetmm.getText()+"',"
 									+ "LCOUNT="+txtlcount.getText()+", ROUND="+txtround.getText()+", QTY="+txtqty.getText()+", TRADESWITCH="+chckbxTradeSwitch.isSelected()+" "
-											+ " WHERE FNAME='"+Fname+"' and ID="+Identity+";";
+											+ "ISEND=false WHERE FNAME='"+Fname+"' and ID="+Identity+";";
 					objdb.executeNonQuery(h2con, update);
 				}
 				JOptionPane.showMessageDialog(frmformula, "Formula Saved Sucessfully ", "INFO",JOptionPane.INFORMATION_MESSAGE);

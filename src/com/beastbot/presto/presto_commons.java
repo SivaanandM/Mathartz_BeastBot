@@ -2,10 +2,8 @@ package com.beastbot.presto;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
@@ -21,16 +19,11 @@ import org.marketcetera.types.trade.Side;
 import org.marketcetera.types.trade.TimeInForce;
 
 import com.beastbot.list.Scriptsdetail;
-//import com.tradebot.presto.Date;
-//import com.tradebot.presto.EsbConnection;
-//import com.tradebot.presto.ReportHandler;
 import com.symphonyfintech.gateway.EsbOrder;
 import com.symphonyfintech.gateway.PositionBean;
 import com.symphonyfintech.gateway.ReportHolder;
 import com.symphonyfintech.gateway.SecurityType;
 import com.symphonyfintech.gateway.SymbolDetail;
-//import com.tradebot.dbcommons.db_commons;
-//import com.tradebot.dbcommons.tradebot_utility;
 
 public class presto_commons {
 	
@@ -224,5 +217,92 @@ public class presto_commons {
 		return sciptsdetailobj;
 	}
 
+	public String userPlaceOrderNSE(String exchange,
+			String securityType, String symbol, String securityId,
+			String expDate, String account, String quantity, String price,
+			String stopPrice, String optionType, String strikePrice,
+			String orderType, String customField, String remark,
+			String timeInForce, String side) {
+		String clientID = null;
+		try {
+			EsbOrder esbOrder = new EsbOrder();
+
+			esbConnect.setDealerName(USERNAME);
+			esbOrder.setEsbuser(USERNAME);
+			esbOrder.setEsbexchange(exchange);
+			esbOrder.setEsbsymbol(symbol);
+			esbOrder.setSecurityID(securityId);
+
+			StringTokenizer date = new StringTokenizer(expDate, "-");
+			String day = date.nextToken();
+			String month = date.nextToken();
+			String year = date.nextToken();
+
+			
+			
+			ESBEXPDATE = new Date(day, month, year);
+			gcal = (GregorianCalendar) GregorianCalendar.getInstance();
+
+			xgcal = DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
+
+			if (date != null) {
+				xgcal.setDay(Integer.parseInt(ESBEXPDATE.getDay()));
+				xgcal.setMonth(Integer.parseInt(ESBEXPDATE.getMonth()));
+				xgcal.setYear(Integer.parseInt(ESBEXPDATE.getYear()));
+				esbOrder.setEsbexpiry(xgcal);
+			}
+
+			esbOrder.setEsbaccount(account);
+			esbOrder.setEsbquantity(new Integer(quantity));
+			esbOrder.setEsbprice(new BigDecimal(price));
+			esbOrder.setEsbstopPrice(new BigDecimal(stopPrice));
+			esbOrder.setOptionType(optionType);
+			esbOrder.setStrikePrice(strikePrice);
+			esbOrder.setInstanceIdCustomField(customField);
+			esbOrder.setRemark(remark);
+
+			if (securityType.equalsIgnoreCase("CM")) {
+				esbOrder.setEsbsecurityType(SecurityType.COMMON_STOCK);
+				// esbOrder.setEsbexpiry(null);
+				esbOrder.setOptionType("null");
+				esbOrder.setStrikePrice("null");
+			} else if (securityType.equalsIgnoreCase("FUT")) {
+				esbOrder.setEsbsecurityType(SecurityType.FUTURE);
+			} else if (securityType.equalsIgnoreCase("OPT")) {
+				esbOrder.setEsbsecurityType(SecurityType.OPTION);
+			}
+
+			if (orderType.equalsIgnoreCase("limit")) {
+				esbOrder.setEsborderType(OrderType.LIMIT);
+				esbOrder.setEsbstopPrice(null);
+			} else if (orderType.equalsIgnoreCase("market")) {
+				esbOrder.setEsborderType(OrderType.MARKET);
+				esbOrder.setEsbprice(null);
+				esbOrder.setEsbstopPrice(null);
+			} else if (orderType.equalsIgnoreCase("stop limit")) {
+				esbOrder.setEsborderType(OrderType.STOP_LIMIT);
+			} else if (orderType.equalsIgnoreCase("stop market")) {
+				esbOrder.setEsborderType(OrderType.STOP);
+				esbOrder.setEsbprice(null);
+			}
+			if (timeInForce.equalsIgnoreCase("day")) {
+				esbOrder.setEsbtimeInForce(TimeInForce.DAY);
+			}
+			if (side.equalsIgnoreCase("buy")) {
+				esbOrder.setEsbside(Side.BUY);
+			} else if (side.equalsIgnoreCase("sell")) {
+				esbOrder.setEsbside(Side.SELL);
+			}
+
+			clientID = esbConnect.placeOrder(USERNAME, esbOrder);
+			System.err.println("CLIENT ID:######################### "
+					+ clientID);
+
+		} catch (DatatypeConfigurationException e2) {
+			e2.printStackTrace();
+		}
+		return clientID;
+	}
+	
 }
   

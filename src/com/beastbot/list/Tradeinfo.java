@@ -1,11 +1,14 @@
 package com.beastbot.list;
 
+import java.util.Date;
+
 public class Tradeinfo {
 	int id;
-	String fname, ordertype, way, fst, clientorderid;
+	String fname, ordertype, way, clientorderid;
+	Date fst;
 	double price;
 	
-	public Tradeinfo(int id, String fname, String ordertype, String way, String fst, String clientorderid, double price)
+	public Tradeinfo(int id, String fname, String ordertype, String way, Date fst, String clientorderid, double price)
 	{
 		this.id = id;
 		this.fname = fname;
@@ -15,7 +18,7 @@ public class Tradeinfo {
 		this.clientorderid = clientorderid;
 		this.price = price ;
 	}
-	public int getId()
+	public int getid()
 	{
 		return id;
 	}
@@ -31,7 +34,7 @@ public class Tradeinfo {
 	{
 		return way;
 	}
-	public String getfst()
+	public Date getfst()
 	{
 		return fst;
 	}
@@ -45,6 +48,6 @@ public class Tradeinfo {
 	}
 	public String[] getData()
 	{
-	    return new String[]{String.valueOf(id),fname,ordertype, way,fst,clientorderid ,String.valueOf(price)};
+	    return new String[]{String.valueOf(id),fname,ordertype, way,fst.toString(),clientorderid ,String.valueOf(price)};
 	}
 }

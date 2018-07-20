@@ -1,5 +1,8 @@
 package com.beastbot.list;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class FormulaData {
@@ -8,8 +11,13 @@ public class FormulaData {
 	String fname, st,mt,et;  
 	double x,y;
 	int lcount,round,qty;  
-	Boolean tradeswitch;
-	public FormulaData(int id, String fname, double x, double y, String st,String mt,String et, int lcount,int round, int qty, Boolean tradeswitch) {  
+	Boolean tradeswitch, isend;
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	Date date = new Date();
+	String cdate = sdf.format(date);
+	public static SimpleDateFormat datefmt=new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+	
+	public FormulaData(int id, String fname, double x, double y, String st,String mt,String et, int lcount,int round, int qty, Boolean tradeswitch, Boolean isend) {  
 	    this.id = id;
 	    this.fname = fname;
 	    this.x = x;  
@@ -21,10 +29,11 @@ public class FormulaData {
 	    this.round = round;
 	    this.qty = qty;
 	    this.tradeswitch=tradeswitch;
+	    this.isend = isend;
 	    
 	}
 	
-	public int getId() {
+	public int getid() {
         return id;
     }
 	public String getfname() {
@@ -51,11 +60,25 @@ public class FormulaData {
     public String getET() {
         return et;
     }
+    public Date getSTDate() throws ParseException {
+       
+        return datefmt.parse(cdate+" "+st+":00");
+    }
+    public Date getMTDate() throws ParseException {
+    	return datefmt.parse(cdate+" "+mt+":00");
+    }
+    public Date getETDate() throws ParseException {
+    	return datefmt.parse(cdate+" "+et+":00");
+    }
     public int getQty() {
         return qty;
     }
     public Boolean getTradeswitch() {
         return tradeswitch;
+    }
+    public Boolean getIsend()
+    {
+    	return isend;
     }
 
 }

@@ -9,6 +9,7 @@ import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
+import java.time.Month;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -48,6 +49,7 @@ import com.beastbot.common.DbFuncs;
 import com.beastbot.list.Amazevalues;
 import com.beastbot.list.BeastViewList;
 import com.beastbot.list.BeastViewListTableModel;
+import com.beastbot.presto.Date;
 import com.beastbot.presto.presto_commons;
 import com.beastbot.presto.engine.FeedAPITesterWithQueue;
 
@@ -75,7 +77,7 @@ public class BeastView implements KeyListener{
     String col[]= {"ID","HEAD","F1 Point","F2 Point","F3 Point","F4 Point","F5 Point","PLAYER"};
     List<BeastViewList> ViewList ;
     private static int HEADER_HEIGHT = 32;
-    presto_commons objpresto;
+    
     TableColumnModel columnModel;
     DefaultTableCellRenderer renderer;
     
@@ -105,7 +107,7 @@ public class BeastView implements KeyListener{
 	{
 		dbobj = new DbFuncs();
 		h2con = dbobj.CheckandConnectDB(h2con);
-		objpresto = new presto_commons();
+		CommonObjects.objpresto = new presto_commons();
 		centraldate = dbobj.loadCentralizedDate(h2con);
 		ViewList = dbobj.getBeastViewData(h2con, "SELECT * FROM TBL_BEAST_VIEW ORDER BY ID;");
 		initialize();
@@ -550,7 +552,7 @@ public class BeastView implements KeyListener{
 			    	  if (e.isControlDown() && e.getKeyCode() == 67) 
 					  {
 			    		  //CTRL+ C
-			    		  ScriptSearch search = new ScriptSearch(objpresto);
+			    		  ScriptSearch search = new ScriptSearch(CommonObjects.objpresto);
 			          }
 			    	  if ( e.getKeyCode() == 112) 
 					  {
@@ -645,7 +647,7 @@ public class BeastView implements KeyListener{
 		if (e.isControlDown() && e.getKeyCode() == 67) 
 		  {
   		  //CTRL+ H
-  		  ScriptSearch search = new ScriptSearch(objpresto);
+  		  ScriptSearch search = new ScriptSearch(CommonObjects.objpresto);
         }
 		if (e.isControlDown() && e.getKeyCode() == 72) 
 		{

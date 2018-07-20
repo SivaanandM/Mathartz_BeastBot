@@ -23,7 +23,7 @@ public class getListcommon {
 	 public FormulaData getFormulaDataByID(int id, List<FormulaData> f)
 	 {
 			 for(FormulaData data : f) {
-			       if(data.getId() == id)
+			       if(data.getid() == id)
 			          return data;
 			    }
 			 return null;
@@ -41,6 +41,14 @@ public class getListcommon {
 	 {
 			 for(SquadScripts data : f) {
 			       if(data.getid() == id)
+			          return data;
+			    }
+			 return null;
+	 }
+	 public Tradeinfo getTradeinfoByIDandFname(int id, String fname, List<Tradeinfo> f)
+	 {
+			 for(Tradeinfo data : f) {
+			       if((data.getid() == id) && data.getFname().equalsIgnoreCase(fname))
 			          return data;
 			    }
 			 return null;

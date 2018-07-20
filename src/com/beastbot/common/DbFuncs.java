@@ -186,7 +186,7 @@ public class DbFuncs {
 	         stmt.execute(Querystr);
 	         ResultSet rs =stmt.getResultSet(); 
 	         while (rs.next()) {
-	        	 FormulaData record = new FormulaData(rs.getInt("id"), rs.getString("fname"),rs.getDouble("X"),rs.getDouble("Y"),rs.getString("st"),rs.getString("mt"),rs.getString("et"),rs.getInt("lcount"),rs.getInt("round"),rs.getInt("qty"),rs.getBoolean("tradeswitch"));
+	        	 FormulaData record = new FormulaData(rs.getInt("id"), rs.getString("fname"),rs.getDouble("X"),rs.getDouble("Y"),rs.getString("st"),rs.getString("mt"),rs.getString("et"),rs.getInt("lcount"),rs.getInt("round"),rs.getInt("qty"),rs.getBoolean("tradeswitch"),rs.getBoolean("isend"));
 	             set.add(record);
 	         }
 	         
