@@ -386,7 +386,7 @@ public class DbFuncs {
 	         ResultSet rs =stmt.getResultSet(); 
 	         while (rs.next()) {
 	        	 Amazevalues record = new Amazevalues(rs.getInt("ID"),rs.getString("HEADID"),
-	        			 rs.getString("PLAYERID"),0,0,0,0.0,0.0,0.0,0.0,0.0,"ST");
+	        			 rs.getString("PLAYERID"),0,0,0,0.0,0.0,0.0,0.0,0.0,"FT");
 	        	 avs.add(record);
 	         }
 	         

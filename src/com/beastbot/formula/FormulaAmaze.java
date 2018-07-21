@@ -23,6 +23,7 @@ public class FormulaAmaze {
 	Boolean tradeswitch, isend;
 	public static SimpleDateFormat datefmt=new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 	getListcommon listcom = new getListcommon();
+	Boolean Isboxed =false;
 	
 	public void FormulaAmazeDriver(String [] ids, double LTP, Date LTT)
 	{
@@ -97,7 +98,7 @@ public class FormulaAmaze {
 			if(ltt.after(st))
 			{
 				//L1 & R1 LOGIC FLOW IMPLEMENT IN L1R1Flow()
-				if (way.equalsIgnoreCase("ST"))
+				if (way.equalsIgnoreCase("FT"))
 				{
 					//for the first iteration setting low and high and finding low and high till
 					if ((low == 0 ) && (high == 0))
@@ -119,19 +120,34 @@ public class FormulaAmaze {
 					L1Flow();
 					R1Flow();
 				}
-				if (way.toUpperCase().contains("L"))
+				if (way.equalsIgnoreCase("L1") || way.equalsIgnoreCase("L5") || way.equalsIgnoreCase("L4"))
 				{
 					L2Flow();
-					L3Flow();
-					L4Flow();
+					if (!way.equalsIgnoreCase("L2"))
+					{
+						L3Flow();
+						L4Flow();
+					}
 				}
-				if (way.toUpperCase().contains("R"))
+				if(way.equalsIgnoreCase("L3"))
+				{
+					L5Flow();
+					R5Flow();
+				}
+				if (way.equalsIgnoreCase("R1") || way.equalsIgnoreCase("R5") || way.equalsIgnoreCase("R4"))
 				{
 					R2Flow();
-					R3Flow();
-					R4Flow();
+					if (!way.equalsIgnoreCase("R2"))
+					{
+						R3Flow();
+						R4Flow();
+					}
 				}
-				
+				if(way.equalsIgnoreCase("R3"))
+				{
+					L5Flow();
+					R5Flow();
+				}
 			}
 		}
 		catch(Exception ex)
@@ -151,24 +167,28 @@ public class FormulaAmaze {
 			 * L1 Box Implementation  
 			 * 
 			 */
-			if (ltp > (low + (low*(x/100))))
+			if (Isboxed = false)
 			{
-				//If last trade time is greater then MT then ending in if loop
-				if (ltt.after(mt))
+				if (ltp > (low + (low*(x/100))))
 				{
-					// setting this variable to to end formula 
-					isend = true;
-				}
-				else
-				{
-					//Entering Market By BUY command
-					String strorderid =null;
-					strorderid = placeorder(identity, qty,"BUY");
-					Tradeinfo ti=new Tradeinfo(identity, "F1", "BUY", "L1", ltt, strorderid, ltp);
-					CommonObjects.GlobalTradeInfo.add(ti);
-					way = "L1";
-					nextline = low + (low*(x/100));
-					baseline = low;
+					//If last trade time is greater then MT then ending in if loop
+					if (ltt.after(mt))
+					{
+						// setting this variable to to end formula 
+						isend = true;
+					}
+					else
+					{
+						//Entering Market By BUY command
+						String strorderid =null;
+						strorderid = placeorder(identity, qty,"BUY");
+						Tradeinfo ti=new Tradeinfo(identity, "F1", "BUY", "L1", ltt, strorderid, ltp);
+						CommonObjects.GlobalTradeInfo.add(ti);
+						way = "L1";
+						nextline = low + (low*(x/100));
+						baseline = low;
+					}
+					Isboxed = true;
 				}
 			}
 			
@@ -181,6 +201,8 @@ public class FormulaAmaze {
 	public void L2Flow()
 	{
 		try
+		{
+		if (Isboxed = false)
 		{
 		  if(ltt.after(et))
 		  {
@@ -199,7 +221,9 @@ public class FormulaAmaze {
 			  CommonObjects.GlobalTradeInfo.add(ti);
 			  way = "L2";
 			  isend = true;
+			  Isboxed = true;
 		  }
+		}
 		}
 		catch(Exception ex)
 		{
@@ -211,42 +235,45 @@ public class FormulaAmaze {
 	{
 		try
 		{
-			if (ltp < baseline)
+			if (Isboxed = false)
 			{
-				if (c==0)
+				if (ltp < baseline)
 				{
-					String strorderid =null;
-					strorderid = placeorder(identity, qty,"SELL");
-					points = points - 2;
-					Tradeinfo ti=new Tradeinfo(identity, "F1", "SELL", "L3", ltt, strorderid, ltp);
-					CommonObjects.GlobalTradeInfo.add(ti);
-					way = "L3";
+					if (c==0)
+					{
+						String strorderid =null;
+						strorderid = placeorder(identity, qty,"SELL");
+						points = points - 2;
+						Tradeinfo ti=new Tradeinfo(identity, "F1", "SELL", "L3", ltt, strorderid, ltp);
+						CommonObjects.GlobalTradeInfo.add(ti);
+						way = "L3";
+					}
+					else
+					{
+						String strorderid =null;
+						strorderid = placeorder(identity, (int)(qty/2),"SELL");
+						points = points - 1;
+						Tradeinfo ti=new Tradeinfo(identity, "F1", "SELL", "L3", ltt, strorderid, ltp);
+						CommonObjects.GlobalTradeInfo.add(ti);
+						way = "L3";
+					}
+					c = c-1;
+					r = r+1;
+					if (c == -1)
+					{
+						lc = lc+1;
+					}
+					if (lc == lcount)
+					{
+						isend = true;
+					}
+					if (r == round)
+					{
+						isend = true;
+					}
+					c = 0;
+					Isboxed = true;
 				}
-				else
-				{
-					String strorderid =null;
-					strorderid = placeorder(identity, (int)(qty/2),"SELL");
-					points = points - 1;
-					Tradeinfo ti=new Tradeinfo(identity, "F1", "SELL", "L3", ltt, strorderid, ltp);
-					CommonObjects.GlobalTradeInfo.add(ti);
-					way = "L3";
-				}
-				c = c-1;
-				r = r+1;
-				if (c == -1)
-				{
-					lc = lc+1;
-				}
-				if (lc == lcount)
-				{
-					isend = true;
-				}
-				if (r == round)
-				{
-					isend = true;
-				}
-				c = 0;
-				L5Flow();
 			}
 		}
 		catch(Exception ex)
@@ -258,20 +285,24 @@ public class FormulaAmaze {
 	{
 		try
 		{
-			if (ltp >= (nextline + (nextline*(y/100))))
+			if (Isboxed = false)
 			{
-				baseline = nextline;
-				nextline = (nextline + (nextline*(y/100)));
-				points=points+1;
-				c=c+1;
-				if(c == 1)
+				if (ltp >= (nextline + (nextline*(y/100))))
 				{
-					String strorderid =null;
-					strorderid = placeorder(identity, (int) (qty/2),"SELL");
-					points = points +1;
-					Tradeinfo ti=new Tradeinfo(identity, "F1", "SELL", "L4", ltt, strorderid, ltp);
-					CommonObjects.GlobalTradeInfo.add(ti);
-					way ="L4";
+					baseline = nextline;
+					nextline = (nextline + (nextline*(y/100)));
+					points=points+1;
+					c=c+1;
+					if(c == 1)
+					{
+						String strorderid =null;
+						strorderid = placeorder(identity, (int) (qty/2),"SELL");
+						points = points +1;
+						Tradeinfo ti=new Tradeinfo(identity, "F1", "SELL", "L4", ltt, strorderid, ltp);
+						CommonObjects.GlobalTradeInfo.add(ti);
+						way ="L4";
+					}
+					Isboxed = true;
 				}
 			}
 		}
@@ -288,21 +319,26 @@ public class FormulaAmaze {
 	{
 		try
 		{
-			if(ltp > (baseline + (baseline*(x/100))))
+			if (Isboxed = false)
 			{
-				if (ltt.after(mt))
+				if(ltp > (baseline + (baseline*(x/100))))
 				{
-					isend = true;
+					if (ltt.after(mt))
+					{
+						isend = true;
+					}
+					else
+					{
+						String strorderid =null;
+						strorderid = placeorder(identity, qty,"BUY");
+						Tradeinfo ti=new Tradeinfo(identity, "F1", "BUY", "L5", ltt, strorderid, ltp);
+						CommonObjects.GlobalTradeInfo.add(ti);
+						way="L5";
+						nextline = (baseline + (baseline*(x/100)));
+					}
+					Isboxed = true;
 				}
-				else
-				{
-				String strorderid =null;
-				strorderid = placeorder(identity, qty,"BUY");
-				Tradeinfo ti=new Tradeinfo(identity, "F1", "BUY", "L5", ltt, strorderid, ltp);
-				CommonObjects.GlobalTradeInfo.add(ti);
-				way="L5";
-				nextline = (baseline + (baseline*(x/100)));
-				}
+			
 			}
 		}
 		catch(Exception ex)
@@ -322,24 +358,28 @@ public class FormulaAmaze {
 			 * R1 Box Implementation  
 			 * 
 			 */
-			if(ltp < (high - (high*(x/100))))
+			if (Isboxed = false)
 			{
-				//If last trade time is greater then MT then ending in if loop
-				if (ltt.after(mt))
+				if(ltp < (high - (high*(x/100))))
 				{
-					// setting this variable to to end formula 
-					isend = true;
-				}
-				else
-				{
-					//Entering Market By SELL command
-					String strorderid =null;
-					strorderid = placeorder(identity, qty,"SELL");
-					Tradeinfo ti=new Tradeinfo(identity, "F1", "SELL", "R1", ltt, strorderid, ltp);
-					CommonObjects.GlobalTradeInfo.add(ti);
-					way = "R1";
-					nextline = high - (high*(x/100));
-					baseline = high;
+					//If last trade time is greater then MT then ending in if loop
+					if (ltt.after(mt))
+					{
+						// setting this variable to to end formula 
+						isend = true;
+					}
+					else
+					{
+						//Entering Market By SELL command
+						String strorderid =null;
+						strorderid = placeorder(identity, qty,"SELL");
+						Tradeinfo ti=new Tradeinfo(identity, "F1", "SELL", "R1", ltt, strorderid, ltp);
+						CommonObjects.GlobalTradeInfo.add(ti);
+						way = "R1";
+						nextline = high - (high*(x/100));
+						baseline = high;
+					}
+					Isboxed = true;
 				}
 			}
 		}
@@ -352,22 +392,27 @@ public class FormulaAmaze {
 	{
 		try
 		{
-			if(ltt.after(et))
+			if (Isboxed = false)
 			{
-				points = points + 0.5;	
-				String strorderid= null;
-				if (c >=1 )
+				if(ltt.after(et))
 				{
-					strorderid = placeorder(identity, (int) (qty/2),"BUY");
+					points = points + 0.5;	
+					String strorderid= null;
+					if (c >=1 )
+					{
+						strorderid = placeorder(identity, (int) (qty/2),"BUY");
+					}
+					else
+					{
+						strorderid = placeorder(identity, qty,"BUY");
+					}
+					Tradeinfo ti=new Tradeinfo(identity, "F1", "SELL", "R2", ltt, strorderid, ltp);
+					CommonObjects.GlobalTradeInfo.add(ti);
+					way = "R2";
+					isend = true;
+					
+					Isboxed = true;
 				}
-				else
-				{
-					strorderid = placeorder(identity, qty,"BUY");
-				}
-				Tradeinfo ti=new Tradeinfo(identity, "F1", "SELL", "R2", ltt, strorderid, ltp);
-				CommonObjects.GlobalTradeInfo.add(ti);
-				way = "R2";
-				isend = true;
 			}
 		}
 		catch(Exception ex)
@@ -379,41 +424,44 @@ public class FormulaAmaze {
 	{
 		try
 		{
-			if (ltp > baseline)
+			if (Isboxed = false)
 			{
-				if (c==0)
+				if (ltp > baseline)
 				{
-					String strorderid =null;
-					strorderid = placeorder(identity, qty,"BUY");
-					Tradeinfo ti=new Tradeinfo(identity, "F1", "BUY", "R3", ltt, strorderid, ltp);
-					way = "R3";
-					CommonObjects.GlobalTradeInfo.add(ti);
-					points = points-2;
+					if (c==0)
+					{
+						String strorderid =null;
+						strorderid = placeorder(identity, qty,"BUY");
+						Tradeinfo ti=new Tradeinfo(identity, "F1", "BUY", "R3", ltt, strorderid, ltp);
+						way = "R3";
+						CommonObjects.GlobalTradeInfo.add(ti);
+						points = points-2;
+					}
+					else
+					{
+						String strorderid = null;
+						strorderid = placeorder(identity, (int) (qty/2),"BUY");
+						Tradeinfo ti=new Tradeinfo(identity, "F1", "BUY", "R3", ltt, strorderid, ltp);
+						way = "R3";
+						CommonObjects.GlobalTradeInfo.add(ti);
+						points = points-1;
+					}
+					c = c-1;
+					r = r-1;
+					if (c == -1)
+					{
+						lc= lc +1;
+					}
+					if (lc == lcount)
+					{
+						isend = true;
+					}
+					if (r == round)
+					{
+						isend = true;
+					}
+					Isboxed = true;
 				}
-				else
-				{
-					String strorderid = null;
-					strorderid = placeorder(identity, (int) (qty/2),"BUY");
-					Tradeinfo ti=new Tradeinfo(identity, "F1", "BUY", "R3", ltt, strorderid, ltp);
-					way = "R3";
-					CommonObjects.GlobalTradeInfo.add(ti);
-					points = points-1;
-				}
-				c = c-1;
-				r = r-1;
-				if (c == -1)
-				{
-					lc= lc +1;
-				}
-				if (lc == lcount)
-				{
-					isend = true;
-				}
-				if (r == round)
-				{
-					isend = true;
-				}
-				R5Flow();
 			}
 		}
 		catch(Exception ex)
@@ -425,20 +473,24 @@ public class FormulaAmaze {
 	{
 		try
 		{
-			if (ltp <= (nextline - (nextline*y/100)))
+			if (Isboxed = false)
 			{
-				baseline =nextline;
-				nextline = (nextline - (nextline*y/100));
-				points =points +1;
-				c=c+1;
-				if(c==1)
+				if (ltp <= (nextline - (nextline*y/100)))
 				{
-					String strorderid;
-					strorderid = placeorder(identity, (int) (qty/2),"BUY");
-					Tradeinfo ti=new Tradeinfo(identity, "F1", "BUY", "R4", ltt, strorderid, ltp);
-					way = "R4";
-					CommonObjects.GlobalTradeInfo.add(ti);
-					points = points+1;
+					baseline =nextline;
+					nextline = (nextline - (nextline*y/100));
+					points =points +1;
+					c=c+1;
+					if(c==1)
+					{
+						String strorderid;
+						strorderid = placeorder(identity, (int) (qty/2),"BUY");
+						Tradeinfo ti=new Tradeinfo(identity, "F1", "BUY", "R4", ltt, strorderid, ltp);
+						way = "R4";
+						CommonObjects.GlobalTradeInfo.add(ti);
+						points = points+1;
+					}
+					Isboxed = true;
 				}
 			}
 		}
@@ -451,20 +503,24 @@ public class FormulaAmaze {
 	{
 		try
 		{
-			if(ltp < (baseline - (baseline*(x/100))))
+			if (Isboxed = false)
 			{
-				String strorderid= null;
-				if (ltt.after(mt))
+				if(ltp < (baseline - (baseline*(x/100))))
 				{
-					isend =  true;
-				}
-				else
-				{
-					strorderid = placeorder(identity, qty,"BUY");
-					Tradeinfo ti=new Tradeinfo(identity, "F1", "BUY", "R5", ltt, strorderid, ltp);
-					CommonObjects.GlobalTradeInfo.add(ti);
-					way = "R5";
-					nextline = (baseline - (baseline*(x/100)));
+					String strorderid= null;
+					if (ltt.after(mt))
+					{
+						isend =  true;
+					}
+					else
+					{
+						strorderid = placeorder(identity, qty,"BUY");
+						Tradeinfo ti=new Tradeinfo(identity, "F1", "BUY", "R5", ltt, strorderid, ltp);
+						CommonObjects.GlobalTradeInfo.add(ti);
+						way = "R5";
+						nextline = (baseline - (baseline*(x/100)));
+					}
+					Isboxed = true;
 				}
 			}
 		}
