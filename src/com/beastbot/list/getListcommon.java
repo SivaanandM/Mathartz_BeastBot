@@ -1,5 +1,6 @@
 package com.beastbot.list;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class getListcommon {
@@ -45,13 +46,14 @@ public class getListcommon {
 			    }
 			 return null;
 	 }
-	 public Tradeinfo getTradeinfoByIDandFname(int id, String fname, List<Tradeinfo> f)
+	 public List<Tradeinfo> getTradeinfoByIDandFname(int id, String fname, List<Tradeinfo> f)
 	 {
+		 List<Tradeinfo> tf = new ArrayList<Tradeinfo>();
 			 for(Tradeinfo data : f) {
 			       if((data.getid() == id) && data.getFname().equalsIgnoreCase(fname))
-			          return data;
+			           tf.add(data);
 			    }
-			 return null;
+			 return tf;
 	 }
 
 }

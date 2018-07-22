@@ -1,10 +1,12 @@
 package com.beastbot.formula;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import com.beastbot.common.CommonObjects;
 import com.beastbot.list.Amazevalues;
+import com.beastbot.list.BeastViewList;
 import com.beastbot.list.FormulaData;
 import com.beastbot.list.SquadScripts;
 import com.beastbot.list.Tradeinfo;
@@ -24,6 +26,10 @@ public class FormulaAmaze {
 	public static SimpleDateFormat datefmt=new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 	getListcommon listcom = new getListcommon();
 	Boolean Isboxed =false;
+	Amazevalues fvalue= null;
+	FormulaData finput =null;
+	BeastViewList bv = null;
+	
 	
 	public void FormulaAmazeDriver(String [] ids, double LTP, Date LTT)
 	{
@@ -39,6 +45,7 @@ public class FormulaAmaze {
 				{
 					Amaze();
 				}
+				UpdateVariables();
 			}
 		}
 		catch(Exception ex)
@@ -50,11 +57,28 @@ public class FormulaAmaze {
 			
 		}
 	}
+	public void UpdateVariables()
+	{
+		try
+		{
+			fvalue.SetAmazevalues(c, lc, r, points, low, high, nextline, baseline, way);
+			finput.setIsend(isend);
+			bv = listcom.getBeastViewListByID(identity,CommonObjects.GlobalBeastViewList);
+			bv.setF1Point(points);
+			
+		}
+		catch(Exception ex)
+		{
+			System.out.println(ex.toString());
+		}
+		
+	}
 	public void AssignvVariables()
 	{
 		try
 		{
-			Amazevalues fvalue = listcom.getAmazeValuesByID(identity, CommonObjects.GlobalAmazeValues);
+			
+			fvalue = listcom.getAmazeValuesByID(identity, CommonObjects.GlobalAmazeValues);
 			c = fvalue.getc();
 			lc = fvalue.getlc();
 			r = fvalue.getr();
@@ -67,7 +91,7 @@ public class FormulaAmaze {
 			nextline = fvalue.getnextline();
 			baseline = fvalue.getbaseline();
 			
-			FormulaData finput = listcom.getFormulaDataByID(identity,  CommonObjects.GlobalAmazeFormulaList);
+			finput = listcom.getFormulaDataByID(identity,  CommonObjects.GlobalAmazeFormulaList);
 			
 			x =finput.getX();
 			y = finput.getY();
@@ -460,6 +484,7 @@ public class FormulaAmaze {
 					{
 						isend = true;
 					}
+					c= 0;
 					Isboxed = true;
 				}
 			}
@@ -475,10 +500,10 @@ public class FormulaAmaze {
 		{
 			if (Isboxed = false)
 			{
-				if (ltp <= (nextline - (nextline*y/100)))
+				if (ltp <= (nextline - (nextline*(y/100))))
 				{
 					baseline =nextline;
-					nextline = (nextline - (nextline*y/100));
+					nextline = (nextline - (nextline*(y/100)));
 					points =points +1;
 					c=c+1;
 					if(c==1)

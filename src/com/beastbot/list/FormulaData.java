@@ -80,5 +80,9 @@ public class FormulaData {
     {
     	return isend;
     }
+    public void setIsend(Boolean end)
+    {
+    	this.isend = end;
+    }
 
 }

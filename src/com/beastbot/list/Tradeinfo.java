@@ -12,7 +12,7 @@ public class Tradeinfo {
 	{
 		this.id = id;
 		this.fname = fname;
-		this.ordertype = fname;
+		this.ordertype = ordertype;
 		this.way= way;
 		this.fst = fst;
 		this.clientorderid = clientorderid;

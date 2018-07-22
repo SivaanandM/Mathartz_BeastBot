@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -49,6 +50,8 @@ import com.beastbot.common.DbFuncs;
 import com.beastbot.list.Amazevalues;
 import com.beastbot.list.BeastViewList;
 import com.beastbot.list.BeastViewListTableModel;
+import com.beastbot.list.Tradeinfo;
+import com.beastbot.list.getListcommon;
 import com.beastbot.presto.Date;
 import com.beastbot.presto.presto_commons;
 import com.beastbot.presto.engine.FeedAPITesterWithQueue;
@@ -203,7 +206,6 @@ public class BeastView implements KeyListener{
 		
 		JPanel pnldowncenter = new JPanel();
 		pnldowncenter.setBackground(new Color(51, 51, 51));
-		//float s =(((int) width) - ((int) width)/9);
 		pnldowncenter.setPreferredSize(new Dimension((((int) width) - ((int) width)/3), 60));
 		pnldown.add(pnldowncenter,BorderLayout.CENTER);
 		
@@ -219,6 +221,7 @@ public class BeastView implements KeyListener{
 				CommonObjects.Globaluniqueheadid = dbobj.getMultiColumnRecords(h2con, "SELECT DISTINCT(HEADID), HEADSYMBOL FROM TBL_TRADE_LINE;");
 				CommonObjects.Globaltradlinemap = dbobj.getuniquetransposeId(h2con);
 				CommonObjects.GlobalAmazeValues = dbobj.getInitialAmazevalues(h2con);
+				CommonObjects.GlobalTradeInfo = new ArrayList<Tradeinfo>();
 				FeedAPITesterWithQueue objfeeder =new FeedAPITesterWithQueue();
 				 new Thread(() -> {
 					 objfeeder.startfeed();

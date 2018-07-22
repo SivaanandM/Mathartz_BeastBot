@@ -78,7 +78,55 @@ public class Amazevalues {
 	    		String.valueOf(points), String.valueOf(low), String.valueOf(high), String.valueOf(nextline), String.valueOf(baseline), way};
 	}
 	
+	public void setc(int cval)
+	{
+		this.C = cval;
+	}
+	public void setlc(int lcval)
+	{
+		this.LC = lcval;
+	}
+	public void setr(int rval)
+	{
+		this.R = rval;
+	}
+	public void setpoints(double pointsval)
+	{
+		this.points=pointsval;
+	}
+	public void setlow(double lowval)
+	{
+		this.low=lowval;
+	}
+	public void sethigh(double highval)
+	{
+		this.high = highval;
+	}
+	public void setnextline(double nextlineval)
+	{
+		this.nextline=nextlineval;
+	}
+	public void setbaseline(double baselineval)
+	{
+		this.baseline=baselineval;
+	}
+	public void setway(String wayval)
+	{
+		this.way=wayval;
+	}
 	
+	public void SetAmazevalues(int c, int lc, int r, double points, double low, double high, double nextline, double baseline, String way)
+	{
+		this.C = c;
+		this.LC = lc;
+		this.R = r;
+		this.points = points;
+		this.low = low;
+		this.high = high;
+		this.nextline = nextline;
+		this.baseline = baseline;
+		this.way = way;
+	}
 	
 
 }
