@@ -51,9 +51,8 @@ public class FeedConsumer extends Thread{
 							if ( CommonObjects.Globaltradlinemap[k][0].equals(CommonObjects.Globaluniqueheadid[i][0]))
 							{
 								fids = CommonObjects.Globaltradlinemap[k][1].split(":");
-								//mdp.getLastTradeTime(CommonObjects.Globaluniqueheadid[i][0]);
-								//Date date1 = new Date((mdp.getLastTradeTime(CommonObjects.Globaluniqueheadid[i][0]) * 1000) + c.getTimeInMillis());
-								System.out.println("hi - "+ mdp.getLastTradePrice(CommonObjects.Globaluniqueheadid[i][0])/100);
+								//System.out.println("LTP - "+ mdp.getLastTradePrice(CommonObjects.Globaluniqueheadid[i][0])/100 +
+								//		"LTT -");
 								objFamaze.FormulaAmazeDriver(fids, (mdp.getLastTradePrice(CommonObjects.Globaluniqueheadid[i][0])/100), 
 										new Date((mdp.getLastTradeTime(CommonObjects.Globaluniqueheadid[i][0]) * 1000) + c.getTimeInMillis()));
 								break;

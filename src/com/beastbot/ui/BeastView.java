@@ -50,6 +50,7 @@ import com.beastbot.common.DbFuncs;
 import com.beastbot.list.Amazevalues;
 import com.beastbot.list.BeastViewList;
 import com.beastbot.list.BeastViewListTableModel;
+import com.beastbot.list.SquadScripts;
 import com.beastbot.list.Tradeinfo;
 import com.beastbot.list.getListcommon;
 import com.beastbot.presto.Date;

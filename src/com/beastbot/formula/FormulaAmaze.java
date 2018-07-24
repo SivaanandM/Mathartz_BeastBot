@@ -35,6 +35,8 @@ public class FormulaAmaze {
 	{
 		try
 		{
+			//System.out.println("LTP - "+ltp + " LTT - "+ltt);
+			Isboxed =false;
 			ltp= LTP;
 			ltt= LTT;
 			for (String id : ids) 
@@ -191,7 +193,7 @@ public class FormulaAmaze {
 			 * L1 Box Implementation  
 			 * 
 			 */
-			if (Isboxed = false)
+			if (Isboxed == false)
 			{
 				if (ltp > (low + (low*(x/100))))
 				{
@@ -226,7 +228,7 @@ public class FormulaAmaze {
 	{
 		try
 		{
-		if (Isboxed = false)
+		if (Isboxed == false)
 		{
 		  if(ltt.after(et))
 		  {
@@ -259,7 +261,7 @@ public class FormulaAmaze {
 	{
 		try
 		{
-			if (Isboxed = false)
+			if (Isboxed == false)
 			{
 				if (ltp < baseline)
 				{
@@ -309,7 +311,7 @@ public class FormulaAmaze {
 	{
 		try
 		{
-			if (Isboxed = false)
+			if (Isboxed == false)
 			{
 				if (ltp >= (nextline + (nextline*(y/100))))
 				{
@@ -343,7 +345,7 @@ public class FormulaAmaze {
 	{
 		try
 		{
-			if (Isboxed = false)
+			if (Isboxed == false)
 			{
 				if(ltp > (baseline + (baseline*(x/100))))
 				{
@@ -382,7 +384,7 @@ public class FormulaAmaze {
 			 * R1 Box Implementation  
 			 * 
 			 */
-			if (Isboxed = false)
+			if (Isboxed == false)
 			{
 				if(ltp < (high - (high*(x/100))))
 				{
@@ -416,7 +418,7 @@ public class FormulaAmaze {
 	{
 		try
 		{
-			if (Isboxed = false)
+			if (Isboxed == false)
 			{
 				if(ltt.after(et))
 				{
@@ -448,7 +450,7 @@ public class FormulaAmaze {
 	{
 		try
 		{
-			if (Isboxed = false)
+			if (Isboxed == false)
 			{
 				if (ltp > baseline)
 				{
@@ -471,7 +473,7 @@ public class FormulaAmaze {
 						points = points-1;
 					}
 					c = c-1;
-					r = r-1;
+					r = r+1;
 					if (c == -1)
 					{
 						lc= lc +1;
@@ -498,7 +500,7 @@ public class FormulaAmaze {
 	{
 		try
 		{
-			if (Isboxed = false)
+			if (Isboxed == false)
 			{
 				if (ltp <= (nextline - (nextline*(y/100))))
 				{
@@ -528,7 +530,7 @@ public class FormulaAmaze {
 	{
 		try
 		{
-			if (Isboxed = false)
+			if (Isboxed == false)
 			{
 				if(ltp < (baseline - (baseline*(x/100))))
 				{
@@ -564,15 +566,19 @@ public class FormulaAmaze {
 			{
 				SquadScripts pl= listcom.getSquadScriptsByID(id, CommonObjects.GlobalSquadScript);
 				String sectype;
-				if(pl.getPExchange().equalsIgnoreCase("NSEFO"))
+				if(pl.getPInstrument().equalsIgnoreCase("FUTIDX"))
 				{
-					sectype="FO";
+					sectype="FUT";
+				}
+				else if (pl.getPInstrument().equalsIgnoreCase("OPTIDX"))
+				{
+					sectype="OPT";
 				}
 				else
 				{
 					sectype="CM";
 				}
-				String expdate = pl.getPExpdd()+"-"+com.beastbot.presto.Date.getmonthvalue(pl.getPExpmonthyear().substring(2, 5))+"-"+pl.getPExpmonthyear().substring(2, 5);
+				String expdate = pl.getPExpdd()+"-"+com.beastbot.presto.Date.getmonthvalue(pl.getPExpmonthyear().substring(0, 3))+"-"+pl.getPExpmonthyear().substring(3, 5);
 				clientid = CommonObjects.objpresto.userPlaceOrderNSE("omnesys", sectype, pl.getPSymbol(), pl.getplayersecid(), expdate, "FA9749", String.valueOf(quant), "0.0", "0.0", pl.getPOpttype(), pl.getPStrike(),
 						"MARKET", "Presto_Mathsartz_Strategy", "Testing Order", "DAY", orderside);
 			}

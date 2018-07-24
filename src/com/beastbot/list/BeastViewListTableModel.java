@@ -39,10 +39,10 @@ public class BeastViewListTableModel extends AbstractTableModel
 		      case 0: return list.getid();
 		      case 1: return list.getHeadDisplay();
 		      case 2: return list.getF1Point();
-		      case 3: return list.getF1Point();
-		      case 4: return list.getF1Point();
-		      case 5: return list.getF1Point();
-		      case 6: return list.getF1Point();
+		      case 3: return list.getF2Point();
+		      case 4: return list.getF3Point();
+		      case 5: return list.getF4Point();
+		      case 6: return list.getF5Point();
 		      case 7: return list.getPlayerDisplay();
 		      // to complete here...
 		      default: return null;

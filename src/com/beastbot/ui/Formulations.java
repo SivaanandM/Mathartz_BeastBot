@@ -341,7 +341,7 @@ public class Formulations {
 					String update ="UPDATE TBL_FORMULA_DATA SET X="+txtx.getText()+", Y="+txty.getText()+",ST='"+txtsthh.getText()+":"+txtstmm.getText()+"',"
 							+ " MT='"+txtmthh.getText()+":"+txtmtmm.getText()+"', ET='"+txtethh.getText()+":"+txtetmm.getText()+"',"
 									+ "LCOUNT="+txtlcount.getText()+", ROUND="+txtround.getText()+", QTY="+txtqty.getText()+", TRADESWITCH="+chckbxTradeSwitch.isSelected()+" "
-											+ "ISEND=false WHERE FNAME='"+Fname+"' and ID="+Identity+";";
+											+ ", ISEND=false WHERE FNAME='"+Fname+"' and ID="+Identity+";";
 					objdb.executeNonQuery(h2con, update);
 				}
 				JOptionPane.showMessageDialog(frmformula, "Formula Saved Sucessfully ", "INFO",JOptionPane.INFORMATION_MESSAGE);
