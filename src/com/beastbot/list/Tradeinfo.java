@@ -1,6 +1,10 @@
 package com.beastbot.list;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Tradeinfo {
 	int id;
@@ -34,9 +38,17 @@ public class Tradeinfo {
 	{
 		return way;
 	}
-	public Date getfst()
+	public String getfst()
 	{
-		return fst;
+		DateFormat format = new SimpleDateFormat("E MMM d HH:mm:ss z yyyy", Locale.ENGLISH);
+		SimpleDateFormat dtformat = new SimpleDateFormat("HH:mm:ss");
+		try {
+			return dtformat.format(format.parse(fst.toString()));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	public String getclientorderid()
 	{

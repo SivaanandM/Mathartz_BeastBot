@@ -9,6 +9,8 @@ import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
@@ -239,8 +241,34 @@ public class BeastView implements KeyListener{
 		
 		btnstop = new JButton("STOP");
 		btnstop.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				CommonObjects.isRunning=false;
+			public void actionPerformed(ActionEvent e) 
+			{
+				
+				try
+				{
+				    String [] updatebeastview = new String[CommonObjects.GlobalBeastViewList.size()];
+				    int i = 0;
+				    for (BeastViewList bv : CommonObjects.GlobalBeastViewList) 
+				    {
+				    	updatebeastview[i] = "UPDATE TBL_BEAST_VIEW SET F1POINT='"+bv.getF1Point()+"', F2POINT='"+bv.getF2Point()+"',"
+				    			+ "F3POINT='"+bv.getF3Point()+"',F4POINT='"+bv.getF4Point()+"' WHERE ID="+bv.getid()+";";
+					}
+				    dbobj.executeBatchStatement(h2con, updatebeastview);
+				    dbobj.executeNonQuery(h2con, "DELETE FROM TBL_TRADE_INFO;");
+				    i=0;
+				    String [] insettradeinfo = new String[CommonObjects.GlobalTradeInfo.size()];
+				    for(Tradeinfo ti : CommonObjects.GlobalTradeInfo)
+				    {
+				    	insettradeinfo[i] = "INSERT INTO TBL_TRADE_INFO (ID,FNAME,ORDERTYPE,WAY,FST,ORDERID,PRICE) VALUES ("+ti.getid()+","
+				    			+ "'"+ti.getFname()+"','"+ti.getOrdertype()+"','"+ti.getway()+"','"+ti.getfst().toString()+"','"+ti.getclientorderid()+"',"+ti.getPrice()+");";
+				    }
+					CommonObjects.isRunning=false;
+				}
+				catch(Exception ex)
+				{
+					
+				}
+				
 			}
 		});
 		btnstop.setPreferredSize(new Dimension(150, 35));
@@ -289,9 +317,9 @@ public class BeastView implements KeyListener{
 			gl_pnldown.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_pnldown.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(txtdd, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+					.addComponent(txtdd, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(txtmmm, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
+					.addComponent(txtmmm, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(txtyy, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
@@ -299,14 +327,15 @@ public class BeastView implements KeyListener{
 					.addContainerGap())
 		);
 		gl_pnldown.setVerticalGroup(
-			gl_pnldown.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_pnldown.createSequentialGroup()
+			gl_pnldown.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_pnldown.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_pnldown.createParallelGroup(Alignment.TRAILING)
-						.addComponent(txtyy, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+						.addComponent(txtdd, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
 						.addComponent(btndatefix, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
-						.addComponent(txtmmm, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
-						.addComponent(txtdd, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE))
+						.addGroup(Alignment.LEADING, gl_pnldown.createParallelGroup(Alignment.BASELINE)
+							.addComponent(txtyy, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+							.addComponent(txtmmm, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)))
 					.addContainerGap())
 		);
 		pnldownleft.setLayout(gl_pnldown);

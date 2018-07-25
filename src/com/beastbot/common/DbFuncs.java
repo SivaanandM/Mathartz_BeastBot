@@ -10,8 +10,12 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 import org.pmw.tinylog.*;
@@ -22,6 +26,7 @@ import com.beastbot.list.BeastViewList;
 import com.beastbot.list.FormulaData;
 import com.beastbot.list.Scriptsdetail;
 import com.beastbot.list.SquadScripts;
+import com.beastbot.list.Tradeinfo;
 
 import org.h2.jdbcx.JdbcDataSource;
 
@@ -211,6 +216,45 @@ public class DbFuncs {
 		}
 		return set;
 	}
+	
+	public List<Tradeinfo> getTradeInfo(Connection conn,String Querystr)
+	{
+		
+		List<Tradeinfo> set=new ArrayList<Tradeinfo>();  
+		try {
+			 DateFormat format = new SimpleDateFormat("E MMM d HH:mm:ss z yyyy", Locale.ENGLISH);
+			 conn = CheckandConnectDB(conn);
+	         stmt = conn.createStatement();
+	         stmt.execute(Querystr);
+	         ResultSet rs =stmt.getResultSet(); 
+	         while (rs.next()) {
+	        	
+	        	 Tradeinfo record = new Tradeinfo(rs.getInt("ID"), rs.getString("FNAME"), rs.getString("ORDERTYPE"), rs.getString("WAY"), format.parse(rs.getString("FST")), rs.getString("ORDERID"),rs.getDouble("PRICE"));
+	             set.add(record);
+	         }
+	         
+	         if (rs != null) {
+	                rs.close();
+	            }
+	        
+		}
+		catch(Exception ex){
+			System.out.println(ex.getMessage() +"QUERY :"+Querystr);
+			Logger.error(ex);
+		}
+		finally {
+			try {
+	            
+	            if (stmt != null) {
+	                stmt.close();
+	            }
+	        } catch (SQLException e) {
+	            Logger.error("Ignored", e);
+	        }	
+		}
+		return set;
+	}
+	
 	
 	public String [] loadCentralizedDate(Connection conlink)
 	{

@@ -70,7 +70,15 @@ public class TradeInsight {
 		headname=Heeddisplay;
 		playername=playerdisplay;
 		identity = id;
-		tf= listcom.getTradeinfoByIDandFname(id, formula, CommonObjects.GlobalTradeInfo);
+		if (CommonObjects.isRunning == false)
+		{
+			dbobj =  new DbFuncs();
+			tf = dbobj.getTradeInfo(h2con, "SELECT * FROM TBL_TRADE_INFO WHERE ID="+id+" AND FNAME='"+formula+"';");
+		}
+		else
+		{
+			tf= listcom.getTradeinfoByIDandFname(id, formula, CommonObjects.GlobalTradeInfo);
+		}
 		initialize();
 	}
 
